@@ -6,7 +6,7 @@ The custom transaction serialization presented is for the purely fictitious BOLO
 
 ## Amount units
 
-The base unit in BOLOK *chain* is the BOL and the smallest unit used in raw transaction is the *bolino* or mBOL: 1 BOL = 1000 mBOL.
+The base unit in BOLOK *chain* is the KLAY and the smallest unit used in raw transaction is the *bolino* or mBOL: 1 KLAY = 1000 mBOL.
 
 ## Address format
 
