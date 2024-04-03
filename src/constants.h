@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * Instruction class of the Boilerplate application.
+ * Instruction class of the Klaytn application.
  */
 #define CLA 0xE0
 
