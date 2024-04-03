@@ -101,7 +101,7 @@ The input data is the RLP encoded transaction streamed to the device in 255 byte
 
 #### Description
 
-This command returns boilerplate application version
+This command returns klaytn application version
 
 #### Coding
 
@@ -128,7 +128,7 @@ None
 
 #### Description
 
-This command returns boilerplate application name
+This command returns klaytn application name
 
 #### Coding
 
