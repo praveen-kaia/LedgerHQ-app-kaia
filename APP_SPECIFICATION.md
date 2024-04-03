@@ -19,7 +19,7 @@ The application interface can be accessed over HID or BLE
 
 ## APDUs
 
-### GET BOILERPLATE PUBLIC ADDRESS
+### GET KLAYTN PUBLIC ADDRESS
 
 #### Description
 
@@ -55,7 +55,7 @@ The address can be optionally checked on the device before being returned.
 | Chain code                                                       | var    |
 
 
-### SIGN BOILERPLATE TRANSACTION
+### SIGN KLAYTN TRANSACTION
 
 #### Description
 
