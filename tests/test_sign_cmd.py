@@ -50,6 +50,27 @@ def perform_test_sign_tx_with_raw_tx(firmware, backend, navigator, test_name, ra
     assert check_signature_validity(public_key, der_sig, raw_transaction_bytes)
 
 
+# In this test we send to the device a Cancel transaction to sign and validate it on screen
+# The transaction is short and will be sent in one chunk
+# We will ensure that the displayed information is correct by using screenshots comparison
+def test_sign_tx_cancel_tx(firmware, backend, navigator, test_name):
+    # This is the transaction's data structure and content.
+    # The encoding is RLP, and the transaction is as follows:
+    # encode(
+    #     encode(
+    #         type: 0x38,
+    #         nonce: 0x19 #25
+    #         gasPrice: 0x0ba43b7400, #50000000000
+    #         gas: 0x0493e0, #300000
+    #         from: 0x6E93a3ACfbaDF457F29fb0E57FA42274004c32EA,
+    #     )
+    #     chainId: 0x03e9, #1001
+    #     0
+    #     0
+    # )
+    raw_transaction_hex = "e8a2e13819850ba43b7400830493e0946e93a3acfbadf457f29fb0e57fa42274004c32ea8203e98080"
+    perform_test_sign_tx_with_raw_tx(firmware, backend, navigator, test_name, raw_transaction_hex)
+
 
 # # In this test se send to the device a transaction to sign and validate it on screen
 # # The transaction is short and will be sent in one chunk
