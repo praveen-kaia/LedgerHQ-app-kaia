@@ -7,7 +7,7 @@ from ragger.error import ExceptionRAPDU
 from ragger.navigator import NavInsID
 from utils import ROOT_SCREENSHOT_PATH, check_signature_validity
 
-# In theses tests we check the behavior of the device when asked to sign a transaction
+# In these tests we check the behavior of the device when asked to sign a transaction
 
 
 
