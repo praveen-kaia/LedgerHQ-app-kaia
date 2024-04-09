@@ -36,7 +36,7 @@ int helper_send_response_pubkey() {
     offset += PUBKEY_LEN;
 
     resp[offset++] = ADDRESS_LEN;
-    if(!address_from_pubkey(G_context.pk_info.raw_public_key, resp + offset, ADDRESS_LEN)){
+    if (!address_from_pubkey(G_context.pk_info.raw_public_key, resp + offset, ADDRESS_LEN)) {
         return io_send_sw(SW_ADDRESS_FAIL);
     };
     offset += ADDRESS_LEN;
