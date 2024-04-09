@@ -51,6 +51,8 @@ The address can be optionally checked on the device before being returned.
 | ---                                                              | ---    | 
 | Public Key length                                                | 1      | 
 | Public Key                                                       | var    |
+| Address length                                                   | 1      |
+| Address                                                          | var    |
 | Chain code length                                                | 1      |
 | Chain code                                                       | var    |
 
