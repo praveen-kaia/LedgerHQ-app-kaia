@@ -60,3 +60,7 @@
  * Status word for signature fail.
  */
 #define SW_SIGNATURE_FAIL 0xB008
+/**
+ * Status word for fail to compute address.
+ */
+#define SW_ADDRESS_FAIL 0xB009
