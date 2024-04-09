@@ -13,7 +13,7 @@ def test_get_public_key_no_confirm(backend):
     for path in ["m/44'/8217'/0'/0/0", "m/44'/8217'/0'/0/0", "m/44'/8217'/911'/0/0", "m/44'/8217'/255/255/255", "m/44'/8217'/2147483647/0/0/0/0/0/0/0"]:
         client = KlaytnCommandSender(backend)
         response = client.get_public_key(path=path).data
-        _, public_key, _, chain_code = unpack_get_public_key_response(response)
+        _, public_key, _, address, _, chain_code = unpack_get_public_key_response(response)
 
         ref_public_key, ref_chain_code = calculate_public_key_and_chaincode(CurveChoice.Secp256k1, path=path)
         assert public_key.hex() == ref_public_key
@@ -43,7 +43,7 @@ def test_get_public_key_confirm_accepted(firmware, backend, navigator, test_name
                                            test_name,
                                            instructions)
     response = client.get_async_response().data
-    _, public_key, _, chain_code = unpack_get_public_key_response(response)
+    _, public_key, _, address, _, chain_code = unpack_get_public_key_response(response)
 
     ref_public_key, ref_chain_code = calculate_public_key_and_chaincode(CurveChoice.Secp256k1, path=path)
     assert public_key.hex() == ref_public_key
