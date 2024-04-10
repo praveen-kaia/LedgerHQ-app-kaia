@@ -12,6 +12,6 @@ services:
       - "5000:5000" # api
       - "40000:40000" # apdu
     environment:
-      - GDB_DIRECTORY_LIST="/speculos/sources:/speculos/lib"
-    command: "-d --model nanosp apps/app.elf --display headless --apdu-port 40000 "
+      - GDB_DIRECTORY_LIST="/speculos/sources:/speculos/lib:/speculos/sources/apdu:/speculos/sources/handler:/speculos/sources/helper:/speculos/sources/transaction:/speculos/sources/ui"
+    command: "-d --model nanox apps/app.elf --display headless --apdu-port 40000 "
     # Add `--vnc-password "<password>"` for macos users to use built-in vnc client.
