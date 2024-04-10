@@ -5,6 +5,7 @@
 
 #define MAX_TX_LEN   510
 #define ADDRESS_LEN  20
+#define INT256_LEN  32
 #define MAX_MEMO_LEN 465  // 510 - ADDRESS_LEN - 2*SIZE(U64) - SIZE(MAX_VARINT)
 
 typedef enum {
@@ -18,10 +19,18 @@ typedef enum {
     WRONG_LENGTH_ERROR = -7
 } parser_status_e;
 
+typedef struct uint256_t {
+    uint8_t value[INT256_LEN];
+    uint8_t length;
+} uint256_t;
+
 typedef struct {
+    uint256_t gasprice;
+    uint256_t startgas; /// also known as `gaslimit`
+    uint256_t value;    /// amount value
+    uint256_t chainID;
     uint64_t nonce;     /// nonce (8 bytes)
-    uint64_t value;     /// amount value (8 bytes)
     uint8_t *to;        /// pointer to address (20 bytes)
-    uint8_t *memo;      /// memo (variable length)
-    uint64_t memo_len;  /// length of memo (8 bytes)
+    uint8_t ratio;      /// ratio for partial fee delegated tx
+    bool dataPresent;   /// flag for data presence
 } transaction_t;
