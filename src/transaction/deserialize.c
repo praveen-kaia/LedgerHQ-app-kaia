@@ -38,17 +38,27 @@ parser_status_e transaction_deserialize(buffer_t *buf, transaction_t *tx) {
         .txType = 0,
         .currentField = RLP_NONE,
         .processingField = false,
+        .commandLength = buf->size,
+        .workBuffer = buf->ptr,
+
     };
     for(;;){
         if(PARSING_IS_DONE(parsing_ctx)){
             return PARSING_OK;
         }
+        // Old style transaction (pre EIP-155). Transactions could just skip `v,r,s` so we
+        // needed to cut parsing here. commandLength == 0 could happen in two cases :
+        // 1. We are in an old style transaction : just return `PARSING_OK`.
+        // 2. We are at the end of an APDU in a multi-apdu process. This would make us return
+        // `PARSING_OK` preemptively. Case number 2 should NOT happen as it is up to
+        // `ledgerjs` to correctly decrease the size of the APDU (`commandLength`) so that this
+        // situation doesn't happen.
         if ((parsing_ctx.txType == LEGACY && parsing_ctx.currentField == LEGACY_RLP_CHAIN_ID) &&
-            (buf->offset == buf->size)) {
+            (parsing_ctx.commandLength == 0)) {
             tx->chainID.length = 0;
             return PARSING_OK;
         }
-        if (buf->offset == buf->size) {
+        if (parsing_ctx.commandLength == 0) {
             PRINTF("Command length done\n");
             return PARSING_PROCESSING;
         }
@@ -93,7 +103,7 @@ uint8_t readTxByte(parser_context_t *parser_ctx) {
     uint8_t data;
     if (parser_ctx->commandLength < 1) {
         PRINTF("readTxByte Underflow\n");
-        CX_THROW(0x9999);
+        return 0; // This should throw something instead
     }
     data = *parser_ctx->workBuffer;
     parser_ctx->workBuffer++;
@@ -102,6 +112,64 @@ uint8_t readTxByte(parser_context_t *parser_ctx) {
         parser_ctx->currentFieldPos++;
     }
     return data;
+}
+
+bool rlpDecodeLength(uint8_t *buffer, uint32_t *fieldLength, uint32_t *offset, bool *list) {
+    if (*buffer <= 0x7f) {
+        *offset = 0;
+        *fieldLength = 1;
+        *list = false;
+    } else if (*buffer <= 0xb7) {
+        *offset = 1;
+        *fieldLength = *buffer - 0x80;
+        *list = false;
+    } else if (*buffer <= 0xbf) {
+        *offset = 1 + (*buffer - 0xb7);
+        *list = false;
+        switch (*buffer) {
+            case 0xb8:
+                *fieldLength = *(buffer + 1);
+                break;
+            case 0xb9:
+                *fieldLength = (*(buffer + 1) << 8) + *(buffer + 2);
+                break;
+            case 0xba:
+                *fieldLength = (*(buffer + 1) << 16) + (*(buffer + 2) << 8) + *(buffer + 3);
+                break;
+            case 0xbb:
+                *fieldLength = (*(buffer + 1) << 24) + (*(buffer + 2) << 16) +
+                               (*(buffer + 3) << 8) + *(buffer + 4);
+                break;
+            default:
+                return false;  // arbitrary 32 bits length limitation
+        }
+    } else if (*buffer <= 0xf7) {
+        *offset = 1;
+        *fieldLength = *buffer - 0xc0;
+        *list = true;
+    } else {
+        *offset = 1 + (*buffer - 0xf7);
+        *list = true;
+        switch (*buffer) {
+            case 0xf8:
+                *fieldLength = *(buffer + 1);
+                break;
+            case 0xf9:
+                *fieldLength = (*(buffer + 1) << 8) + *(buffer + 2);
+                break;
+            case 0xfa:
+                *fieldLength = (*(buffer + 1) << 16) + (*(buffer + 2) << 8) + *(buffer + 3);
+                break;
+            case 0xfb:
+                *fieldLength = (*(buffer + 1) << 24) + (*(buffer + 2) << 16) +
+                               (*(buffer + 3) << 8) + *(buffer + 4);
+                break;
+            default:
+                return false;  // arbitrary 32 bits length limitation
+        }
+    }
+
+    return true;
 }
 
 bool rlpCanDecode(uint8_t *buffer, uint32_t bufferLength, bool *valid) {
