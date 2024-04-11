@@ -149,7 +149,7 @@ int ui_display_transaction() {
     char amount[30] = {0};
     if (!format_fpu64(amount,
                       sizeof(amount),
-                      G_context.tx_info.transaction.value,
+                      G_context.tx_info.transaction.value.value, // workaround for test purposes
                       EXPONENT_SMALLEST_UNIT)) {
         return io_send_sw(SW_DISPLAY_AMOUNT_FAIL);
     }
