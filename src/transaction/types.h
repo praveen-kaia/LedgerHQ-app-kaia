@@ -27,17 +27,6 @@ typedef struct uint256_t {
     uint8_t length;
 } uint256_t;
 
-typedef struct {
-    uint256_t gasprice;
-    uint256_t startgas; /// also known as `gaslimit`
-    uint256_t value;    /// amount value
-    uint256_t chainID;
-    uint64_t nonce;     /// nonce (8 bytes)
-    uint8_t *to;        /// pointer to address (20 bytes)
-    uint8_t ratio;      /// ratio for partial fee delegated tx
-    bool dataPresent;   /// flag for data presence
-} transaction_t;
-
 typedef enum {
     EIP2930 = 0x01,
     EIP1559 = 0x02,
@@ -62,3 +51,16 @@ typedef enum {
     FEE_DELEGATED_CANCEL = 0x39,
     PARTIAL_FEE_DELEGATED_CANCEL = 0x3A,
 } transaction_type_e;
+
+typedef struct {
+    transaction_type_e txType;      /// transaction type
+    uint256_t gasprice;
+    uint256_t startgas;             /// also known as `gaslimit`
+    uint256_t value;                /// amount value
+    uint256_t chainID;
+    uint64_t nonce;                 /// nonce (8 bytes)
+    uint8_t *to;                    /// pointer to address (20 bytes)
+    uint8_t ratio;                  /// ratio for partial fee delegated tx
+    bool dataPresent;               /// flag for data presence
+} transaction_t;
+
