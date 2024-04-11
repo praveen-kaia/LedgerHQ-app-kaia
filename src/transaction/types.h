@@ -50,6 +50,8 @@ typedef enum {
     CANCEL = 0x38,
     FEE_DELEGATED_CANCEL = 0x39,
     PARTIAL_FEE_DELEGATED_CANCEL = 0x3A,
+
+    LEGACY = 0xc0,
 } transaction_type_e;
 
 typedef struct {
