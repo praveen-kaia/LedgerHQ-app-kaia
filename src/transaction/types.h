@@ -60,7 +60,7 @@ typedef struct {
     uint256_t startgas;             /// also known as `gaslimit`
     uint256_t value;                /// amount value
     uint256_t chainID;
-    uint64_t nonce;                 /// nonce (8 bytes)
+    uint8_t nonce;                 /// nonce (8 bytes)
     uint8_t *to;                    /// pointer to address (20 bytes)
     uint8_t ratio;                  /// ratio for partial fee delegated tx
     bool dataPresent;               /// flag for data presence
