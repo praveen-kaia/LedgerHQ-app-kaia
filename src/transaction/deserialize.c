@@ -232,7 +232,6 @@ static parser_status_e parseRLP(parser_context_t *parser_ctx) {
         PRINTF("RLP decode error\n");
         return PARSING_ERROR;
     }
-    // Ready to process this field
     if (offset == 0) {
         // Hack for single byte, self encoded
         parser_ctx->workBuffer--;
@@ -241,10 +240,15 @@ static parser_status_e parseRLP(parser_context_t *parser_ctx) {
     } else {
         parser_ctx->fieldSingleByte = false;
     }
-    parser_ctx->currentFieldPos = 0;
     parser_ctx->rlpBufferPos = 0;
-    parser_ctx->processingField = true;
-    return PARSING_CONTINUE;
+
+    if (parser_ctx->outerRLP) {
+        parser_ctx->processingOuterRLPField = true;
+    } else {
+        parser_ctx->currentFieldPos = 0;
+        parser_ctx->processingField = true;
+    }
+   return PARSING_CONTINUE;
 }
 
 
