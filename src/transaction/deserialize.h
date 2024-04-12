@@ -44,10 +44,15 @@ typedef struct {
     bool currentFieldIsList; /// flag to indicate if the current field is a list
     uint8_t processingField;  /// flag to indicate if a field is being processed
     bool fieldSingleByte;  /// flag to indicate if the field is a single byte
+    bool outerRLP; /// flag to indicate if the outer RLP is being processed
+    bool processingOuterRLPField; /// flag to indicate if a field in the outer RLP is being processed
     uint8_t commandLength;  /// length of the command
+    uint32_t dataLength;  /// length of the data
     uint8_t rlpBuffer[5];  /// buffer to store RLP data
     uint32_t rlpBufferPos;  /// position in the RLP buffer
     const uint8_t *workBuffer; /// pointer to the buffer being parsed
+    transaction_t *tx;  /// pointer to the transaction structure
+    txFeePayerType_e feePayerType; /// if the transaction is basic, fee delegated or partial fee delegated
 } parser_context_t;
 
 /**
