@@ -5,7 +5,7 @@
 
 #define MAX_TX_LEN   510
 #define ADDRESS_LEN  20
-#define INT256_LEN  32
+#define MAX_INT256  32
 #define MAX_MEMO_LEN 465  // 510 - ADDRESS_LEN - 2*SIZE(U64) - SIZE(MAX_VARINT)
 
 typedef enum {
@@ -23,7 +23,7 @@ typedef enum {
 } parser_status_e;
 
 typedef struct uint256_t {
-    uint8_t value[INT256_LEN];
+    uint8_t value[MAX_INT256];
     uint8_t length;
 } uint256_t;
 
