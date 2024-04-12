@@ -526,7 +526,7 @@ parser_status_e transaction_deserialize(buffer_t *buf, transaction_t *tx) {
                     if (fault) {
                         return PARSING_ERROR;
                     } else {
-                        break;
+                        // break;
                     }
             //     default:
             //         PRINTF("Transaction type %d is not supported\n", parser_ctx.txType);
