@@ -1,7 +1,11 @@
+/**
+ * @file deserialize.h
+ * @brief Contains functions for deserializing and parsing transactions.
+ */
+
 #pragma once
 
 #include "buffer.h"
-
 #include "types.h"
 
 #ifndef MIN
@@ -9,6 +13,10 @@
 #endif
 
 #define RLP_NONE 0
+
+/**
+ * @brief Enumeration of legacy RLP transaction fields.
+ */
 typedef enum {
     LEGACY_RLP_NONE = RLP_NONE,
     LEGACY_RLP_CONTENT,
@@ -25,6 +33,9 @@ typedef enum {
     LEGACY_RLP_DONE
 } rlpLegacyTxField_e;
 
+/**
+ * @brief Enumeration of cancel RLP transaction fields.
+ */
 typedef enum {
     CANCEL_RLP_NONE = RLP_NONE,
     CANCEL_RLP_CONTENT,
@@ -40,12 +51,18 @@ typedef enum {
     CANCEL_RLP_DONE
 } rlpCancelTxField_e;
 
+/**
+ * @brief Enumeration of transaction fee payer types.
+ */
 typedef enum {
     BASIC = 0,
     FEE_DELEGATED = 1,
     PARTIAL_FEE_DELEGATED = 2
 } txFeePayerType_e;
 
+/**
+ * @brief Structure representing the parsing context.
+ */
 typedef struct {
     uint8_t txType;  /// transaction type
     uint8_t currentField;  /// current field being parsed
@@ -66,26 +83,25 @@ typedef struct {
 } parser_context_t;
 
 /**
- * Deserialize raw transaction in structure.
+ * @brief Deserialize raw transaction into a structure.
  *
- * @param[in, out] buf
- *   Pointer to buffer with serialized transaction.
- * @param[out]     tx
- *   Pointer to transaction structure.
+ * This function deserializes a raw transaction stored in a buffer and populates
+ * the transaction structure with the parsed data.
  *
+ * @param[in, out] buf Pointer to the buffer with the serialized transaction.
+ * @param[out] tx Pointer to the transaction structure.
  * @return PARSING_OK if success, error status otherwise.
- *
  */
 parser_status_e transaction_deserialize(buffer_t *buf, transaction_t *tx);
 
 /**
- * Parse RLP fields.
+ * @brief Parse RLP fields.
  *
- * @param[in, out] parsing_ctx
- *   Pointer to parsing context.
+ * This function parses the RLP fields of a transaction based on the provided
+ * parsing context.
  *
+ * @param[in, out] parsing_ctx Pointer to the parsing context.
  * @return PARSING_OK if success, error status otherwise.
- *
  */
 static parser_status_e parseRLP(parser_context_t *parsing_ctx);
 
@@ -105,21 +121,51 @@ static parser_status_e parseRLP(parser_context_t *parsing_ctx);
             parsing_ctx.txType == PARTIAL_FEE_DELEGATED_CANCEL) &&                                           \
             parsing_ctx.currentField == CANCEL_RLP_DONE))
 
+/**
+ * @brief Copy transaction data to the output buffer.
+ *
+ * This function copies the transaction data from the parser context to the
+ * output buffer.
+ *
+ * @param[in] parser_ctx Pointer to the parser context.
+ * @param[out] out Pointer to the output buffer.
+ * @param[in] length Length of the data to copy.
+ * @return True if the data was copied successfully, false otherwise.
+ */
 bool copyTxData(parser_context_t *parser_ctx, uint8_t *out, uint32_t length);
 
+/**
+ * @brief Read a byte from the transaction buffer.
+ *
+ * This function reads a byte from the transaction buffer and advances the
+ * position in the buffer.
+ *
+ * @param[in] parser_ctx Pointer to the parser context.
+ * @return The byte read from the buffer.
+ */
 uint8_t readTxByte(parser_context_t *parser_ctx);
 
 /**
- * @brief Decode an RLP encoded field - see
- * https://github.com/ethereum/wiki/wiki/RLP
- * @param [in] buffer buffer containing the RLP encoded field to decode
- * @param [out] fieldLength length of the RLP encoded field
- * @param [out] offset offset to the beginning of the RLP encoded field from the
- * buffer
- * @param [out] list true if the field encodes a list, false if it encodes a
- * string
- * @return true if the RLP header is consistent
+ * @brief Decode an RLP encoded field.
+ *
+ * This function decodes an RLP encoded field based on the provided buffer.
+ *
+ * @param[in] buffer Buffer containing the RLP encoded field to decode.
+ * @param[out] fieldLength Length of the RLP encoded field.
+ * @param[out] offset Offset to the beginning of the RLP encoded field from the buffer.
+ * @param[out] list True if the field encodes a list, false if it encodes a string.
+ * @return True if the RLP header is consistent, false otherwise.
  */
 bool rlpDecodeLength(uint8_t *buffer, uint32_t *fieldLength, uint32_t *offset, bool *list);
 
+/**
+ * @brief Check if an RLP encoded field can be decoded.
+ *
+ * This function checks if an RLP encoded field in the buffer can be decoded.
+ *
+ * @param[in] buffer Buffer containing the RLP encoded field.
+ * @param[in] bufferLength Length of the buffer.
+ * @param[out] valid True if the RLP encoded field is valid, false otherwise.
+ * @return True if the RLP encoded field can be decoded, false otherwise.
+ */
 bool rlpCanDecode(uint8_t *buffer, uint32_t bufferLength, bool *valid);
