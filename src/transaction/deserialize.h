@@ -4,6 +4,10 @@
 
 #include "types.h"
 
+#ifndef MIN
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
+#endif
+
 #define RLP_NONE 0
 typedef enum {
     LEGACY_RLP_NONE = RLP_NONE,
