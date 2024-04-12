@@ -508,6 +508,51 @@ static bool processRatio(parser_context_t *parser_ctx) {
     return false;
 }
 
+// Transaction processing functions
+
+static bool processTxCancel(parser_context_t *parser_ctx) {
+    bool error = false;
+    switch (parser_ctx->currentField) {
+        case CANCEL_RLP_CONTENT:
+            error = processContent(parser_ctx);
+            break;
+        case CANCEL_RLP_TYPE:
+            error = processType(parser_ctx);
+            break;
+        case CANCEL_RLP_NONCE:
+            error = processNonce(parser_ctx);
+            break;
+        case CANCEL_RLP_GASPRICE:
+            error = processGasprice(parser_ctx);
+            break;
+        case CANCEL_RLP_GASLIMIT:
+            error = processGasLimit(parser_ctx);
+            break;
+        case CANCEL_RLP_FROM:
+            error = processAndDiscard(parser_ctx);
+            // Skip ratio if not partial fee delegated txType
+            if (parser_ctx->feePayerType != PARTIAL_FEE_DELEGATED) {
+                parser_ctx->currentField++;
+            }
+            break;
+        case CANCEL_RLP_RATIO:
+            error = processRatio(parser_ctx);
+            break;
+        case CANCEL_RLP_CHAIN_ID:
+            error = processChainID(parser_ctx);
+            break;
+        case CANCEL_RLP_ZERO1:
+        case CANCEL_RLP_ZERO2:
+            error = processAndDiscard(parser_ctx);
+            break;
+        default:
+            PRINTF("Invalid RLP decoder parser_ctx\n");
+            return true;
+    }
+    return error;
+}
+
+
 uint8_t readTxByte(parser_context_t *parser_ctx) {
     uint8_t data;
     if (parser_ctx->commandLength < 1) {
