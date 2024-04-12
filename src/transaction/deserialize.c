@@ -197,6 +197,12 @@ bool rlpCanDecode(uint8_t *buffer, uint32_t bufferLength, bool *valid) {
     return true;
 }
 
+static void parseNestedRlp(parser_context_t *parser_ctx) {
+    parseRLP(parser_ctx);
+    parseRLP(parser_ctx);
+    parser_ctx->outerRLP = false;
+}
+
 static parser_status_e parseRLP(parser_context_t *parser_ctx) {
     bool canDecode = false;
     uint32_t offset;
