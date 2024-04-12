@@ -40,6 +40,12 @@ typedef enum {
     CANCEL_RLP_DONE
 } rlpCancelTxField_e;
 
+typedef enum {
+    BASIC = 0,
+    FEE_DELEGATED = 1,
+    PARTIAL_FEE_DELEGATED = 2
+} txFeePayerType_e;
+
 typedef struct {
     uint8_t txType;  /// transaction type
     uint8_t currentField;  /// current field being parsed
