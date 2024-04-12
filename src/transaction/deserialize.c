@@ -508,3 +508,33 @@ static bool processRatio(parser_context_t *parser_ctx) {
     return false;
 }
 
+uint8_t readTxByte(parser_context_t *parser_ctx) {
+    uint8_t data;
+    if (parser_ctx->commandLength < 1) {
+        PRINTF("readTxByte Underflow\n");
+        return 0; // This should throw something instead
+    }
+    data = *parser_ctx->workBuffer;
+    parser_ctx->workBuffer++;
+    parser_ctx->commandLength--;
+    if (parser_ctx->processingField) {
+        parser_ctx->currentFieldPos++;
+    }
+    return data;
+}
+
+bool copyTxData(parser_context_t *parser_ctx, uint8_t *out, uint32_t length) {
+    if (parser_ctx->commandLength < length) {
+        PRINTF("copyTxData Underflow\n");
+        return false;
+    }
+    if (out != NULL) {
+        memmove(out, parser_ctx->workBuffer, length);
+    }
+    parser_ctx->workBuffer += length;
+    parser_ctx->commandLength -= length;
+    if (parser_ctx->processingField) {
+        parser_ctx->currentFieldPos += length;
+    }
+    return true;
+}

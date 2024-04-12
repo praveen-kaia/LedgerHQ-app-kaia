@@ -99,6 +99,7 @@ static parser_status_e parseRLP(parser_context_t *parsing_ctx);
             parsing_ctx.txType == PARTIAL_FEE_DELEGATED_CANCEL) &&                                           \
             parsing_ctx.currentField == CANCEL_RLP_DONE))
 
+bool copyTxData(parser_context_t *parser_ctx, uint8_t *out, uint32_t length);
 
 uint8_t readTxByte(parser_context_t *parser_ctx);
 
