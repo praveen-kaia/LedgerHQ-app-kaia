@@ -134,7 +134,7 @@ UX_STEP_NOCB(ux_display_amount_step,
 // #5 screen : reject button
 UX_FLOW(ux_display_transaction_flow,
         &ux_display_review_step,
-        &ux_display_address_step,
+        // &ux_display_address_step,
         &ux_display_amount_step,
         &ux_display_approve_step,
         &ux_display_reject_step);
@@ -158,10 +158,10 @@ int ui_display_transaction() {
 
     memset(g_address, 0, sizeof(g_address));
 
-    if (format_hex(G_context.tx_info.transaction.to, ADDRESS_LEN, g_address, sizeof(g_address)) ==
-        -1) {
-        return io_send_sw(SW_DISPLAY_ADDRESS_FAIL);
-    }
+    // if (format_hex(G_context.tx_info.transaction.to, ADDRESS_LEN, g_address, sizeof(g_address)) ==
+    //     -1) {
+    //     return io_send_sw(SW_DISPLAY_ADDRESS_FAIL);
+    // }
 
     g_validate_callback = &ui_action_validate_transaction;
 
