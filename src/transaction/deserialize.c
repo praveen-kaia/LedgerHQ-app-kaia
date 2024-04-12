@@ -27,92 +27,7 @@
 #include "ledger_assert.h"
 #endif
 
-parser_status_e transaction_deserialize(buffer_t *buf, transaction_t *tx) {
-    LEDGER_ASSERT(buf != NULL, "NULL buf");
-    LEDGER_ASSERT(tx != NULL, "NULL tx");
-
-    if (buf->size > MAX_TX_LEN) {
-        return WRONG_LENGTH_ERROR;
-    }
-    parser_context_t parsing_ctx = {
-        .txType = 0,
-        .currentField = RLP_NONE,
-        .processingField = false,
-        .commandLength = buf->size,
-        .workBuffer = buf->ptr,
-
-    };
-    for(;;){
-        if(PARSING_IS_DONE(parsing_ctx)){
-            return PARSING_OK;
-        }
-        // Old style transaction (pre EIP-155). Transactions could just skip `v,r,s` so we
-        // needed to cut parsing here. commandLength == 0 could happen in two cases :
-        // 1. We are in an old style transaction : just return `PARSING_OK`.
-        // 2. We are at the end of an APDU in a multi-apdu process. This would make us return
-        // `PARSING_OK` preemptively. Case number 2 should NOT happen as it is up to
-        // `ledgerjs` to correctly decrease the size of the APDU (`commandLength`) so that this
-        // situation doesn't happen.
-        if ((parsing_ctx.txType == LEGACY && parsing_ctx.currentField == LEGACY_RLP_CHAIN_ID) &&
-            (parsing_ctx.commandLength == 0)) {
-            tx->chainID.length = 0;
-            return PARSING_OK;
-        }
-        if (parsing_ctx.commandLength == 0) {
-            PRINTF("Command length done\n");
-            return PARSING_PROCESSING;
-        }
-        if (!parsing_ctx.processingField) {
-            parser_status_e status = parseRLP(&parsing_ctx);
-            if (status != PARSING_CONTINUE) {
-                return status;
-            }
-        }
-    }
-
-    // // nonce
-    // if (!buffer_read_u64(buf, &tx->nonce, BE)) {
-    //     return NONCE_PARSING_ERROR;
-    // }
-    // tx->to = (uint8_t *) (buf->ptr + buf->offset);
-    // // TO address
-    // if (!buffer_seek_cur(buf, ADDRESS_LEN)) {
-    //     return TO_PARSING_ERROR;
-    // }
-    // // amount value
-    // if (!buffer_read_u64(buf, &tx->value, BE)) {
-    //     return VALUE_PARSING_ERROR;
-    // }
-    // // length of memo
-    // if (!buffer_read_varint(buf, &tx->memo_len) && tx->memo_len > MAX_MEMO_LEN) {
-    //     return MEMO_LENGTH_ERROR;
-    // }
-    // // memo
-    // tx->memo = (uint8_t *) (buf->ptr + buf->offset);
-    // if (!buffer_seek_cur(buf, tx->memo_len)) {
-    //     return MEMO_PARSING_ERROR;
-    // }
-    // if (!transaction_utils_check_encoding(tx->memo, tx->memo_len)) {
-    //     return MEMO_ENCODING_ERROR;
-    // }
-
-
-    return (buf->offset == buf->size) ? PARSING_OK : WRONG_LENGTH_ERROR;
-}
-uint8_t readTxByte(parser_context_t *parser_ctx) {
-    uint8_t data;
-    if (parser_ctx->commandLength < 1) {
-        PRINTF("readTxByte Underflow\n");
-        return 0; // This should throw something instead
-    }
-    data = *parser_ctx->workBuffer;
-    parser_ctx->workBuffer++;
-    parser_ctx->commandLength--;
-    if (parser_ctx->processingField) {
-        parser_ctx->currentFieldPos++;
-    }
-    return data;
-}
+// RLP related
 
 bool rlpDecodeLength(uint8_t *buffer, uint32_t *fieldLength, uint32_t *offset, bool *list) {
     if (*buffer <= 0x7f) {
@@ -552,6 +467,73 @@ static bool processTxCancel(parser_context_t *parser_ctx) {
     return error;
 }
 
+// Actual transaction parsing
+
+parser_status_e transaction_deserialize(buffer_t *buf, transaction_t *tx) {
+    LEDGER_ASSERT(buf != NULL, "NULL buf");
+    LEDGER_ASSERT(tx != NULL, "NULL tx");
+
+    if (buf->size > MAX_TX_LEN) {
+        return WRONG_LENGTH_ERROR;
+    }
+    parser_context_t parser_ctx = {
+        .txType = 0,
+        .currentField = RLP_NONE + 1,
+        .processingField = false,
+        .commandLength = buf->size,
+        .workBuffer = buf->ptr,
+        .outerRLP = true,
+        .tx = tx,
+    };
+    for(;;){
+        if(PARSING_IS_DONE(parser_ctx)){
+            return PARSING_OK;
+        }
+        // Old style transaction (pre EIP-155). Transactions could just skip `v,r,s` so we
+        // needed to cut parsing here. commandLength == 0 could happen in two cases :
+        // 1. We are in an old style transaction : just return `PARSING_OK`.
+        // 2. We are at the end of an APDU in a multi-apdu process. This would make us return
+        // `PARSING_OK` preemptively. Case number 2 should NOT happen as it is up to
+        // `ledgerjs` to correctly decrease the size of the APDU (`commandLength`) so that this
+        // situation doesn't happen.
+        if ((parser_ctx.txType == LEGACY && parser_ctx.currentField == LEGACY_RLP_CHAIN_ID) &&
+            (parser_ctx.commandLength == 0)) {
+            tx->chainID.length = 0;
+            return PARSING_OK;
+        }
+        if (parser_ctx.commandLength == 0) {
+            PRINTF("Command length done\n");
+            return PARSING_PROCESSING;
+        }
+        if (parser_ctx.outerRLP && !parser_ctx.processingOuterRLPField) {
+            parseNestedRlp(&parser_ctx);
+            continue;
+        }
+        if (!parser_ctx.processingField) {
+            parser_status_e status = parseRLP(&parser_ctx);
+            if (status != PARSING_CONTINUE) {
+                return status;
+            }
+        }
+
+        PRINTF("Current field: %d\n", parser_ctx.currentField);
+            // switch (parser_ctx.txType) {
+                bool fault;
+                // case CANCEL:
+                // case FEE_DELEGATED_CANCEL:
+                // case PARTIAL_FEE_DELEGATED_CANCEL:
+                    fault = processTxCancel(&parser_ctx);
+                    if (fault) {
+                        return PARSING_ERROR;
+                    } else {
+                        break;
+                    }
+            //     default:
+            //         PRINTF("Transaction type %d is not supported\n", parser_ctx.txType);
+            //         return PARSING_ERROR;
+            // }
+    }
+}
 
 uint8_t readTxByte(parser_context_t *parser_ctx) {
     uint8_t data;
