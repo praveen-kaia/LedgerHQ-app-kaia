@@ -216,7 +216,7 @@ static bool processType(parser_context_t *parser_ctx) {
     if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
         uint32_t copySize =
             MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
-        copyTxData(parser_ctx, NULL, copySize);
+        copyTxData(parser_ctx, &parser_ctx->txType, copySize);
     }
     if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
         parser_ctx->currentField++;
@@ -260,7 +260,7 @@ static bool processNonce(parser_context_t *parser_ctx) {
     if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
         uint32_t copySize =
             MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
-        copyTxData(parser_ctx, parser_ctx->tx->nonce, copySize);
+        copyTxData(parser_ctx, &parser_ctx->tx->nonce, copySize);
     }
     if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
         parser_ctx->currentField++;
