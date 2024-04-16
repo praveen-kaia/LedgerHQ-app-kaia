@@ -216,7 +216,7 @@ static bool processType(parser_context_t *parser_ctx) {
     if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
         uint32_t copySize =
             MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
-        copyTxData(parser_ctx, &parser_ctx->txType, copySize);
+        copyTxData(parser_ctx, &parser_ctx->tx->txType, copySize);
     }
     if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
         parser_ctx->currentField++;
@@ -477,7 +477,6 @@ parser_status_e transaction_deserialize(buffer_t *buf, transaction_t *tx) {
         return WRONG_LENGTH_ERROR;
     }
     parser_context_t parser_ctx = {
-        .txType = 0,
         .currentField = RLP_NONE + 1,
         .processingField = false,
         .commandLength = buf->size,
@@ -496,7 +495,7 @@ parser_status_e transaction_deserialize(buffer_t *buf, transaction_t *tx) {
         // `PARSING_OK` preemptively. Case number 2 should NOT happen as it is up to
         // `ledgerjs` to correctly decrease the size of the APDU (`commandLength`) so that this
         // situation doesn't happen.
-        if ((parser_ctx.txType == LEGACY && parser_ctx.currentField == LEGACY_RLP_CHAIN_ID) &&
+        if ((parser_ctx.tx->txType == LEGACY && parser_ctx.currentField == LEGACY_RLP_CHAIN_ID) &&
             (parser_ctx.commandLength == 0)) {
             tx->chainID.length = 0;
             return PARSING_OK;
@@ -517,7 +516,7 @@ parser_status_e transaction_deserialize(buffer_t *buf, transaction_t *tx) {
         }
 
         PRINTF("Current field: %d\n", parser_ctx.currentField);
-            // switch (parser_ctx.txType) {
+            // switch (parser_ctx.tx->txType) {
                 bool fault;
                 // case CANCEL:
                 // case FEE_DELEGATED_CANCEL:
@@ -529,7 +528,7 @@ parser_status_e transaction_deserialize(buffer_t *buf, transaction_t *tx) {
                         // break;
                     }
             //     default:
-            //         PRINTF("Transaction type %d is not supported\n", parser_ctx.txType);
+            //         PRINTF("Transaction type %d is not supported\n", parser_ctx.tx->txType);
             //         return PARSING_ERROR;
             // }
     }

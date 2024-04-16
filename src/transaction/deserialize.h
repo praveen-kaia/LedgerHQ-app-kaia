@@ -116,9 +116,9 @@ static parser_status_e parseRLP(parser_context_t *parsing_ctx);
  * @return True if parsing is done, false otherwise.
  */
 #define PARSING_IS_DONE(parsing_ctx)                                                                     \
-        ((parsing_ctx.txType == LEGACY && parsing_ctx.currentField == LEGACY_RLP_DONE)||                  \
-        ((parsing_ctx.txType == CANCEL || parsing_ctx.txType == FEE_DELEGATED_CANCEL ||                 \
-            parsing_ctx.txType == PARTIAL_FEE_DELEGATED_CANCEL) &&                                           \
+        ((parsing_ctx.tx->txType == LEGACY && parsing_ctx.currentField == LEGACY_RLP_DONE)||                  \
+        ((parsing_ctx.tx->txType == CANCEL || parsing_ctx.tx->txType == FEE_DELEGATED_CANCEL ||                 \
+            parsing_ctx.tx->txType == PARTIAL_FEE_DELEGATED_CANCEL) &&                                           \
             parsing_ctx.currentField == CANCEL_RLP_DONE))
 
 /**
