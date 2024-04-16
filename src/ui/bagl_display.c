@@ -124,6 +124,51 @@ UX_STEP_NOCB(ux_display_review_step,
                  "Review",
                  "Transaction",
              });
+// Step with title/text for nonce
+UX_STEP_NOCB(ux_display_nonce_step,
+             bnnn_paging,
+             {
+                 .title = "Nonce",
+                 .text = g_nonce,
+             });
+
+
+// Step with title/text for gas price
+UX_STEP_NOCB(ux_display_gas_price_step,
+             bnnn_paging,
+             {
+                 .title = "Gas Price",
+                 .text = g_gasPrice,
+             });
+// Step with title/text for gas limit
+UX_STEP_NOCB(ux_display_gas_limit_step,
+             bnnn_paging,
+             {
+                 .title = "Gas Limit",
+                 .text = g_gasLimit,
+             });
+// Step with title/text for destination address
+UX_STEP_NOCB(ux_display_to_step,
+             bnnn_paging,
+             {
+                 .title = "To",
+                 .text = g_to,
+             });
+
+// Step with title/text for Smart Contract
+UX_STEP_NOCB(ux_display_smart_contract_step,
+             bnnn_paging,
+             {
+                 .title = "Smart Contract",
+                 .text = g_to,
+             });
+// Step with title/text for fee ratio
+UX_STEP_NOCB(ux_display_fee_ratio_step,
+             bnnn_paging,
+             {
+                 .title = "Fee Ratio",
+                 .text = g_feeRatio,
+             });
 // Step with title/text for amount
 UX_STEP_NOCB(ux_display_amount_step,
              bnnn_paging,
