@@ -37,8 +37,14 @@
 #include "../menu.h"
 
 static action_validate_cb g_validate_callback;
-static char g_amount[30];
+static char g_type[30];
+static char g_nonce[30];
+static char g_gasPrice[30];
+static char g_gasLimit[30];
+static char g_to[43];
 static char g_address[43];
+static char g_feeRatio[30];
+static char g_amount[30];
 
 // Validate/Invalidate public key and go back to home
 static void ui_action_validate_pubkey(bool choice) {
