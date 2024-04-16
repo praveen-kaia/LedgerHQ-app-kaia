@@ -122,8 +122,9 @@ UX_STEP_NOCB(ux_display_review_step,
              {
                  &C_icon_eye,
                  "Review",
-                 "Transaction",
+                 g_type,
              });
+
 // Step with title/text for nonce
 UX_STEP_NOCB(ux_display_nonce_step,
              bnnn_paging,
@@ -178,14 +179,23 @@ UX_STEP_NOCB(ux_display_amount_step,
              });
 
 // FLOW to display transaction information:
-// #1 screen : eye icon + "Review Transaction"
-// #2 screen : display amount
-// #3 screen : display destination address
-// #4 screen : approve button
-// #5 screen : reject button
+// #1 screen: eye icon + "Review Transaction_type"
+// #2 screen: display nonce
+// #3 screen: display gas price
+// #4 screen: display gas limit
+// #5 screen: display destination/smart contract address (not always present)
+// #6 screen: display fee ratio (not always present)
+// #7 screen: display amount (not always present)
+// #8 screen: approve button
+// #9 screen: reject button
 UX_FLOW(ux_display_transaction_flow,
         &ux_display_review_step,
-        // &ux_display_address_step,
+        &ux_display_nonce_step,
+        &ux_display_gas_price_step,
+        &ux_display_gas_limit_step,
+        // &ux_display_to_step, // or ux_display_smart_contract_step
+        // &ux_display_fee_ratio_step,
+        // &ux_display_amount_step,
         &ux_display_amount_step,
         &ux_display_approve_step,
         &ux_display_reject_step);
@@ -196,8 +206,22 @@ int ui_display_transaction() {
         return io_send_sw(SW_BAD_STATE);
     }
 
+    memset(g_type, 0, sizeof(g_type));
+    memset(g_nonce, 0, sizeof(g_nonce));
+    memset(g_gasPrice, 0, sizeof(g_gasPrice));
+    memset(g_gasLimit, 0, sizeof(g_gasLimit));
+    memset(g_to, 0, sizeof(g_to));
+    memset(g_feeRatio, 0, sizeof(g_feeRatio));
     memset(g_amount, 0, sizeof(g_amount));
+
+    char type[30] = {0};
+    char nonce[30] = {0};
+    char gasPrice[30] = {0};
+    char gasLimit[30] = {0};
+    char to[43] = {0};
+    char feeRatio[30] = {0};
     char amount[30] = {0};
+
     if (!format_fpu64(amount,
                       sizeof(amount),
                       G_context.tx_info.transaction.value.value, // workaround for test purposes
