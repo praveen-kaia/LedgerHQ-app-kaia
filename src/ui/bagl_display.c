@@ -34,17 +34,18 @@
 #include "../address.h"
 #include "action/validate.h"
 #include "../transaction/types.h"
+#include "../helper/format.h"
 #include "../menu.h"
 
 static action_validate_cb g_validate_callback;
-static char g_type[30];
+static char g_type[50];
 static char g_nonce[30];
 static char g_gasPrice[30];
 static char g_gasLimit[30];
 static char g_to[43];
 static char g_address[43];
 static char g_feeRatio[30];
-static char g_amount[30];
+static char g_amount[50];
 
 // Validate/Invalidate public key and go back to home
 static void ui_action_validate_pubkey(bool choice) {
@@ -133,7 +134,6 @@ UX_STEP_NOCB(ux_display_type_step,
                  .title = "Type",
                  .text = g_type,
              });
-
 // Step with title/text for nonce
 UX_STEP_NOCB(ux_display_nonce_step,
              bnnn_paging,
@@ -206,7 +206,7 @@ UX_FLOW(ux_display_transaction_flow,
         &ux_display_gas_limit_step,
         // &ux_display_to_step, // or ux_display_smart_contract_step
         // &ux_display_fee_ratio_step,
-        &ux_display_amount_step,
+        // &ux_display_amount_step,
         &ux_display_approve_step,
         &ux_display_reject_step);
 
@@ -220,33 +220,58 @@ int ui_display_transaction() {
     memset(g_nonce, 0, sizeof(g_nonce));
     memset(g_gasPrice, 0, sizeof(g_gasPrice));
     memset(g_gasLimit, 0, sizeof(g_gasLimit));
-    memset(g_to, 0, sizeof(g_to));
-    memset(g_feeRatio, 0, sizeof(g_feeRatio));
+    // memset(g_to, 0, sizeof(g_to));
+    // memset(g_feeRatio, 0, sizeof(g_feeRatio));
     memset(g_amount, 0, sizeof(g_amount));
 
-    char type[30] = {0};
-    char nonce[30] = {0};
-    char gasPrice[30] = {0};
-    char gasLimit[30] = {0};
-    char to[43] = {0};
-    char feeRatio[30] = {0};
-    char amount[30] = {0};
-
-    if (!format_fpu64(amount,
-                      sizeof(amount),
-                      G_context.tx_info.transaction.value.value, // workaround for test purposes
-                      EXPONENT_SMALLEST_UNIT)) {
-        return io_send_sw(SW_DISPLAY_AMOUNT_FAIL);
+    char type[50] = {0};
+    if (!format_transaction_type(G_context.tx_info.transaction.txType, type, sizeof(type))) {
+        return io_send_sw(SW_DISPLAY_TYPE_FAIL);
     }
-    snprintf(g_amount, sizeof(g_amount), "KLAY %.*s", sizeof(amount), amount);
-    PRINTF("Amount: %s\n", g_amount);
+    strncpy(g_type, type, sizeof(g_type));
 
-    memset(g_address, 0, sizeof(g_address));
+    char nonce[30] = {0};
+    if(!format_u64(nonce,
+                   sizeof(nonce),
+                   G_context.tx_info.transaction.nonce)) {
+        return io_send_sw(SW_DISPLAY_NONCE_FAIL);
+    }
+    strncpy(g_nonce, nonce, sizeof(g_nonce));
 
-    // if (format_hex(G_context.tx_info.transaction.to, ADDRESS_LEN, g_address, sizeof(g_address)) ==
-    //     -1) {
+    char gasPrice[30] = {0};
+    uint64_t gasPriceValue = convertUint256ToUint64(&G_context.tx_info.transaction.gasprice);
+    if (!format_u64(gasPrice, sizeof(gasPrice), gasPriceValue)) {
+        return io_send_sw(SW_DISPLAY_GASPRICE_FAIL);
+    }
+    strncpy(g_gasPrice, gasPrice, sizeof(g_gasPrice));
+
+    char gasLimit[30] = {0};
+    uint64_t gasLimitValue = convertUint256ToUint64(&G_context.tx_info.transaction.startgas);
+    if (!format_u64(gasLimit, sizeof(gasLimit), gasLimitValue)) {
+        return io_send_sw(SW_DISPLAY_GAS_FAIL);
+    }
+    strncpy(g_gasLimit, gasLimit, sizeof(g_gasLimit));
+
+    // char to[43] = {0};
+    // if (format_hex(G_context.tx_info.transaction.to, ADDRESS_LEN, to, sizeof(to)) == -1) {
     //     return io_send_sw(SW_DISPLAY_ADDRESS_FAIL);
     // }
+    // strncpy(g_to, to, sizeof(g_to));
+
+    // char feeRatio[30] = {0};
+    // if (!format_u64(feeRatio, sizeof(feeRatio), G_context.tx_info.transaction.ratio)) {
+    //     return io_send_sw(SW_DISPLAY_FEERATIO_FAIL);
+    // }
+    // strncpy(g_feeRatio, feeRatio, sizeof(g_feeRatio));
+
+    // char amount[50] = {0};
+    // if (!ammount_to_string(G_context.tx_info.transaction.value,
+    //                        EXPONENT_SMALLEST_UNIT,
+    //                        amount,
+    //                        sizeof(amount))) {
+    //     return io_send_sw(SW_DISPLAY_AMOUNT_FAIL);
+    // }
+    // snprintf(g_amount, sizeof(g_amount), "KLAY %.*s", sizeof(amount), amount);
 
     g_validate_callback = &ui_action_validate_transaction;
 
