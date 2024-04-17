@@ -111,3 +111,12 @@ bool format_transaction_type(transaction_type_e txType, char *out, size_t out_le
     }
     return true;
 }
+
+uint64_t convertUint256ToUint64(const uint256_t* bytes) {
+    uint64_t result = 0;
+    for (int i = 0; i < bytes->length && i < 8; i++) {
+        result <<= 8;  // Shift existing value left by 8 bits
+        result |= (uint64_t) bytes->value[i];
+    }
+    return result;
+}

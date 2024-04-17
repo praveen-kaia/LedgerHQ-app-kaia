@@ -13,3 +13,12 @@
 
 bool format_transaction_type(transaction_type_e txType, char *out, size_t out_len);
 
+
+/**
+ * Converts a uint256 value to a uint64_t value.
+ *
+ * @param bytes The uint256 value to convert.
+ * @return Returns the converted uint64_t value.
+ */
+uint64_t convertUint256ToUint64(const uint256_t* bytes);
+
