@@ -122,7 +122,16 @@ UX_STEP_NOCB(ux_display_review_step,
              {
                  &C_icon_eye,
                  "Review",
-                 g_type,
+                 "Transaction",
+             });
+
+
+// Step with title/text for transaction type
+UX_STEP_NOCB(ux_display_type_step,
+             bnnn_paging,
+             {
+                 .title = "Type",
+                 .text = g_type,
              });
 
 // Step with title/text for nonce
@@ -179,23 +188,24 @@ UX_STEP_NOCB(ux_display_amount_step,
              });
 
 // FLOW to display transaction information:
-// #1 screen: eye icon + "Review Transaction_type"
-// #2 screen: display nonce
-// #3 screen: display gas price
-// #4 screen: display gas limit
-// #5 screen: display destination/smart contract address (not always present)
-// #6 screen: display fee ratio (not always present)
-// #7 screen: display amount (not always present)
-// #8 screen: approve button
-// #9 screen: reject button
+// #1 screen: eye icon + "Review Transaction"
+// #2 screen: display transaction type
+// #3 screen: display nonce
+// #4 screen: display gas price
+// #5 screen: display gas limit
+// #6 screen: display destination/smart contract address (not always present)
+// #7 screen: display fee ratio (not always present)
+// #8 screen: display amount (not always present)
+// #9 screen: approve button
+// #10 screen: reject button
 UX_FLOW(ux_display_transaction_flow,
         &ux_display_review_step,
+        &ux_display_type_step,
         &ux_display_nonce_step,
         &ux_display_gas_price_step,
         &ux_display_gas_limit_step,
         // &ux_display_to_step, // or ux_display_smart_contract_step
         // &ux_display_fee_ratio_step,
-        // &ux_display_amount_step,
         &ux_display_amount_step,
         &ux_display_approve_step,
         &ux_display_reject_step);
