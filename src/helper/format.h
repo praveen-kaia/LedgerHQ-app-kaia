@@ -62,4 +62,12 @@ bool adjustDecimals(const char *src, size_t srcLength, char *target, size_t targ
  * @param n The number of bytes in the buffer.
  * @return Returns 1 if the buffer contains all zeroes, 0 otherwise.
  */
-static __attribute__((no_instrument_function)) inline int allzeroes(const void *buf, size_t n);
+static __attribute__((no_instrument_function)) inline int allzeroes(const void *buf, size_t n) {
+    uint8_t *p = (uint8_t *) buf;
+    for (size_t i = 0; i < n; ++i) {
+        if (p[i]) {
+            return 0;
+        }
+    }
+    return 1;
+}
