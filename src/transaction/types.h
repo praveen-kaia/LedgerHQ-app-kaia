@@ -56,13 +56,13 @@ typedef enum {
 
 typedef struct {
     transaction_type_e txType;      /// transaction type
+    uint8_t nonce;                 /// nonce (8 bytes)
     uint256_t gasprice;
     uint256_t startgas;             /// also known as `gaslimit`
-    uint256_t value;                /// amount value
-    uint256_t chainID;
-    uint8_t nonce;                 /// nonce (8 bytes)
     uint8_t *to;                    /// pointer to address (20 bytes)
     uint8_t ratio;                  /// ratio for partial fee delegated tx
+    uint256_t value;                /// amount value
+    uint256_t chainID;
     bool dataPresent;               /// flag for data presence
 } transaction_t;
 
