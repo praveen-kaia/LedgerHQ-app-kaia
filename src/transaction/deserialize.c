@@ -467,6 +467,47 @@ static bool processTxCancel(parser_context_t *parser_ctx) {
     return error;
 }
 
+static bool processTxLegacy(parser_context_t *parser_ctx) {
+    bool error = false;
+    switch (parser_ctx->currentField) {
+        case LEGACY_RLP_CONTENT:
+            error = processContent(parser_ctx);
+            break;
+        case LEGACY_RLP_TYPE:
+            error = processType(parser_ctx);
+            break;
+        case LEGACY_RLP_NONCE:
+            error = processNonce(parser_ctx);
+            break;
+        case LEGACY_RLP_GASPRICE:
+            error = processGasprice(parser_ctx);
+            break;
+        case LEGACY_RLP_STARTGAS:
+            error = processGasLimit(parser_ctx);
+            break;
+        case LEGACY_RLP_TO:
+            error = processTo(parser_ctx);
+            break;
+        case LEGACY_RLP_VALUE:
+            error = processValue(parser_ctx);
+            break;
+        case LEGACY_RLP_DATA:
+            error = processData(parser_ctx);
+            break;
+        case LEGACY_RLP_CHAIN_ID:
+            error = processChainID(parser_ctx);
+            break;
+        case LEGACY_RLP_ZERO1:
+        case LEGACY_RLP_ZERO2:
+            error = processAndDiscard(parser_ctx);
+            break;
+        default:
+            PRINTF("Invalid RLP decoder parser_ctx\n");
+            return true;
+    }
+    return error;
+
+}
 // Actual transaction parsing
 
 parser_status_e transaction_deserialize(buffer_t *buf, transaction_t *tx) {
