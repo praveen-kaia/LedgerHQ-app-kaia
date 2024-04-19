@@ -541,6 +541,22 @@ parser_status_e transaction_deserialize(buffer_t *buf, transaction_t *tx) {
         }
         if (parser_ctx.outerRLP && !parser_ctx.processingOuterRLPField) {
             parseNestedRlp(&parser_ctx);
+            // Hack to detect the tx type
+            // If the last field parsed was a fieldSingleByte it means the transaction is a Legacy transaction
+            if(parser_ctx.fieldSingleByte){
+                parser_ctx.tx->txType = LEGACY;
+            } else {
+                // The bype after the nested rlp is the tx type,
+                parseRLP(&parser_ctx);
+                parser_ctx.tx->txType = parser_ctx.workBuffer[0];
+                //Cancel changes made by last parseRLP
+                parser_ctx.workBuffer--;
+                parser_ctx.commandLength++;
+                parser_ctx.processingField = false;
+            }
+            PRINTF("Transaction type: %d\n", parser_ctx.tx->txType);
+
+
             continue;
         }
         if (!parser_ctx.processingField) {
@@ -551,21 +567,29 @@ parser_status_e transaction_deserialize(buffer_t *buf, transaction_t *tx) {
         }
 
         PRINTF("Current field: %d\n", parser_ctx.currentField);
-            // switch (parser_ctx.tx->txType) {
+            switch (parser_ctx.tx->txType) {
                 bool fault;
-                // case CANCEL:
+                case LEGACY:
+                    fault = processTxLegacy(&parser_ctx);
+                    if (fault) {
+                        return PARSING_ERROR;
+                    } else {
+                        break;
+                    }
+                case CANCEL:
                 // case FEE_DELEGATED_CANCEL:
                 // case PARTIAL_FEE_DELEGATED_CANCEL:
                     fault = processTxCancel(&parser_ctx);
                     if (fault) {
                         return PARSING_ERROR;
                     } else {
-                        // break;
+                        break;
                     }
-            //     default:
-            //         PRINTF("Transaction type %d is not supported\n", parser_ctx.tx->txType);
-            //         return PARSING_ERROR;
-            // }
+                default:
+                    PRINTF("Transaction type %d is not supported\n", parser_ctx.tx->txType);
+                    return PARSING_ERROR;
+            }
+
     }
 }
 
