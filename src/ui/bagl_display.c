@@ -210,6 +210,26 @@ UX_FLOW(ux_display_transaction_flow,
         &ux_display_approve_step,
         &ux_display_reject_step);
 
+UX_FLOW(ux_display_legacy_transaction_flow,
+        &ux_display_review_step,
+        &ux_display_type_step,
+        &ux_display_nonce_step,
+        &ux_display_gas_price_step,
+        &ux_display_gas_limit_step,
+        &ux_display_to_step,
+        &ux_display_amount_step,
+        &ux_display_approve_step,
+        &ux_display_reject_step);
+
+UX_FLOW(ux_display_cancel_transaction_flow,
+        &ux_display_review_step,
+        &ux_display_type_step,
+        &ux_display_nonce_step,
+        &ux_display_gas_price_step,
+        &ux_display_gas_limit_step,
+        &ux_display_approve_step,
+        &ux_display_reject_step);
+
 int ui_display_transaction() {
     if (G_context.req_type != CONFIRM_TRANSACTION || G_context.state != STATE_PARSED) {
         G_context.state = STATE_NONE;
@@ -221,7 +241,7 @@ int ui_display_transaction() {
     memset(g_gasPrice, 0, sizeof(g_gasPrice));
     memset(g_gasLimit, 0, sizeof(g_gasLimit));
     memset(g_to, 0, sizeof(g_to));
-    // memset(g_feeRatio, 0, sizeof(g_feeRatio));
+    memset(g_feeRatio, 0, sizeof(g_feeRatio));
     memset(g_amount, 0, sizeof(g_amount));
 
     char type[50] = {0};
@@ -252,11 +272,9 @@ int ui_display_transaction() {
     }
     strncpy(g_gasLimit, gasLimit, sizeof(g_gasLimit));
 
-    char to[43] = {0};
-    if (format_hex(G_context.tx_info.transaction.to, ADDRESS_LEN, to, sizeof(to)) == -1) {
+    if (format_hex(G_context.tx_info.transaction.to, ADDRESS_LEN, g_to, sizeof(g_to)) == -1) {
         return io_send_sw(SW_DISPLAY_ADDRESS_FAIL);
     }
-    strncpy(g_to, to, sizeof(g_to));
 
     char feeRatio[30] = {0};
     if (!format_u64(feeRatio, sizeof(feeRatio), G_context.tx_info.transaction.ratio)) {
@@ -275,8 +293,17 @@ int ui_display_transaction() {
 
     g_validate_callback = &ui_action_validate_transaction;
 
-    ux_flow_init(0, ux_display_transaction_flow, NULL);
-
+    switch(G_context.tx_info.transaction.txType) {
+        case LEGACY:
+            ux_flow_init(0, ux_display_legacy_transaction_flow, NULL);
+            break;
+        case CANCEL:
+            ux_flow_init(0, ux_display_cancel_transaction_flow, NULL);
+            break;
+        default:
+            ux_flow_init(0, ux_display_transaction_flow, NULL);
+            break;
+    }
     return 0;
 }
 
