@@ -15,10 +15,11 @@
  *  limitations under the License.
  *****************************************************************************/
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
+#include <stdbool.h> // bool
+#include <stddef.h> // size_t
+#include <stdint.h> // uint*_t
+#include <string.h> // memcpy
+#include <stdio.h> // snprintf
 
 #include "format.h"
 #include "../transaction/types.h"
