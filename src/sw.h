@@ -37,6 +37,26 @@
  */
 #define SW_DISPLAY_ADDRESS_FAIL 0xB002
 /**
+ * Status word for fail to display transaction's type.
+ */
+#define SW_DISPLAY_TYPE_FAIL 0xB00E
+/**
+ * Status word for fail to display nonce.
+ */
+#define SW_DISPLAY_NONCE_FAIL 0xB00A
+/**
+ * Status word for fail to display gas price.
+ */
+#define SW_DISPLAY_GASPRICE_FAIL 0xB00B
+/**
+ * Status word for fail to display gas.
+ */
+#define SW_DISPLAY_GAS_FAIL 0xB00C
+/**
+ * Status word for fail to display fee ratio.
+ */
+#define SW_DISPLAY_FEERATIO_FAIL 0xB00D
+/**
  * Status word for fail to display amount.
  */
 #define SW_DISPLAY_AMOUNT_FAIL 0xB003
