@@ -71,6 +71,21 @@ def test_sign_tx_cancel_tx(firmware, backend, navigator, test_name):
     raw_transaction_hex = "e8a2e13819850ba43b7400830493e0946e93a3acfbadf457f29fb0e57fa42274004c32ea8203e98080"
     perform_test_sign_tx_with_raw_tx(firmware, backend, navigator, test_name, raw_transaction_hex)
 
+def test_sign_tx_legacy_tx(firmware, backend, navigator, test_name):
+    #The encoding is RLP, and the transaction is as follows:
+    # encode(
+    #     nonce: 0x19
+    #     gasPrice: 0x0ba43b7400, #50000000000
+    #     gas: 0x0493e0, #300000
+    #     to: 0x0ee56b604c869e3792c99e35c1c424f88f87dc8a
+    #     value: 0x01
+    #     input:
+    #     chainId: 0x03e9, #1001
+    #     0
+    #     0
+    #)
+    raw_transaction_hex = "e719850ba43b7400830493e0940ee56b604c869e3792c99e35c1c424f88f87dc8a01808203e98080"
+    perform_test_sign_tx_with_raw_tx(firmware, backend, navigator, test_name, raw_transaction_hex)
 
 # # In this test se send to the device a transaction to sign and validate it on screen
 # # The transaction is short and will be sent in one chunk

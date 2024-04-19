@@ -204,9 +204,29 @@ UX_FLOW(ux_display_transaction_flow,
         &ux_display_nonce_step,
         &ux_display_gas_price_step,
         &ux_display_gas_limit_step,
-        // &ux_display_to_step, // or ux_display_smart_contract_step
-        // &ux_display_fee_ratio_step,
-        // &ux_display_amount_step,
+        &ux_display_to_step, // or ux_display_smart_contract_step
+        &ux_display_fee_ratio_step,
+        &ux_display_amount_step,
+        &ux_display_approve_step,
+        &ux_display_reject_step);
+
+UX_FLOW(ux_display_legacy_transaction_flow,
+        &ux_display_review_step,
+        &ux_display_type_step,
+        &ux_display_nonce_step,
+        &ux_display_gas_price_step,
+        &ux_display_gas_limit_step,
+        &ux_display_to_step,
+        &ux_display_amount_step,
+        &ux_display_approve_step,
+        &ux_display_reject_step);
+
+UX_FLOW(ux_display_cancel_transaction_flow,
+        &ux_display_review_step,
+        &ux_display_type_step,
+        &ux_display_nonce_step,
+        &ux_display_gas_price_step,
+        &ux_display_gas_limit_step,
         &ux_display_approve_step,
         &ux_display_reject_step);
 
@@ -220,8 +240,8 @@ int ui_display_transaction() {
     memset(g_nonce, 0, sizeof(g_nonce));
     memset(g_gasPrice, 0, sizeof(g_gasPrice));
     memset(g_gasLimit, 0, sizeof(g_gasLimit));
-    // memset(g_to, 0, sizeof(g_to));
-    // memset(g_feeRatio, 0, sizeof(g_feeRatio));
+    memset(g_to, 0, sizeof(g_to));
+    memset(g_feeRatio, 0, sizeof(g_feeRatio));
     memset(g_amount, 0, sizeof(g_amount));
 
     char type[50] = {0};
@@ -252,31 +272,38 @@ int ui_display_transaction() {
     }
     strncpy(g_gasLimit, gasLimit, sizeof(g_gasLimit));
 
-    // char to[43] = {0};
-    // if (format_hex(G_context.tx_info.transaction.to, ADDRESS_LEN, to, sizeof(to)) == -1) {
-    //     return io_send_sw(SW_DISPLAY_ADDRESS_FAIL);
-    // }
-    // strncpy(g_to, to, sizeof(g_to));
+    if (format_hex(G_context.tx_info.transaction.to, ADDRESS_LEN, g_to, sizeof(g_to)) == -1) {
+        return io_send_sw(SW_DISPLAY_ADDRESS_FAIL);
+    }
 
-    // char feeRatio[30] = {0};
-    // if (!format_u64(feeRatio, sizeof(feeRatio), G_context.tx_info.transaction.ratio)) {
-    //     return io_send_sw(SW_DISPLAY_FEERATIO_FAIL);
-    // }
-    // strncpy(g_feeRatio, feeRatio, sizeof(g_feeRatio));
+    char feeRatio[30] = {0};
+    if (!format_u64(feeRatio, sizeof(feeRatio), G_context.tx_info.transaction.ratio)) {
+        return io_send_sw(SW_DISPLAY_FEERATIO_FAIL);
+    }
+    strncpy(g_feeRatio, feeRatio, sizeof(g_feeRatio));
 
-    // char amount[50] = {0};
-    // if (!ammount_to_string(G_context.tx_info.transaction.value,
-    //                        EXPONENT_SMALLEST_UNIT,
-    //                        amount,
-    //                        sizeof(amount))) {
-    //     return io_send_sw(SW_DISPLAY_AMOUNT_FAIL);
-    // }
-    // snprintf(g_amount, sizeof(g_amount), "KLAY %.*s", sizeof(amount), amount);
+    char amount[50] = {0};
+    if (!ammount_to_string(G_context.tx_info.transaction.value,
+                           EXPONENT_SMALLEST_UNIT,
+                           amount,
+                           sizeof(amount))) {
+        return io_send_sw(SW_DISPLAY_AMOUNT_FAIL);
+    }
+    snprintf(g_amount, sizeof(g_amount), "KLAY %.*s", sizeof(amount), amount);
 
     g_validate_callback = &ui_action_validate_transaction;
 
-    ux_flow_init(0, ux_display_transaction_flow, NULL);
-
+    switch(G_context.tx_info.transaction.txType) {
+        case LEGACY:
+            ux_flow_init(0, ux_display_legacy_transaction_flow, NULL);
+            break;
+        case CANCEL:
+            ux_flow_init(0, ux_display_cancel_transaction_flow, NULL);
+            break;
+        default:
+            ux_flow_init(0, ux_display_transaction_flow, NULL);
+            break;
+    }
     return 0;
 }
 
