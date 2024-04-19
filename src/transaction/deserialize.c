@@ -470,12 +470,6 @@ static bool processTxCancel(parser_context_t *parser_ctx) {
 static bool processTxLegacy(parser_context_t *parser_ctx) {
     bool error = false;
     switch (parser_ctx->currentField) {
-        case LEGACY_RLP_CONTENT:
-            error = processContent(parser_ctx);
-            break;
-        case LEGACY_RLP_TYPE:
-            error = processType(parser_ctx);
-            break;
         case LEGACY_RLP_NONCE:
             error = processNonce(parser_ctx);
             break;
