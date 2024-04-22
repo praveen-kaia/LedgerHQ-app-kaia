@@ -19,6 +19,7 @@
 #include "deserialize.h"
 #include "utils.h"
 #include "types.h"
+#include "globals.h"
 
 #if defined(TEST) || defined(FUZZ)
 #include "assert.h"
@@ -241,6 +242,11 @@ static bool processChainID(parser_context_t *parser_ctx) {
     }
     if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
         parser_ctx->tx->chainID.length = parser_ctx->currentFieldLength;
+
+        // copy chainId again to G_context.tx_info.chain_id
+        memmove(G_context.tx_info.chain_id.value, parser_ctx->tx->chainID.value, parser_ctx->tx->chainID.length);
+        G_context.tx_info.chain_id.length = parser_ctx->tx->chainID.length;
+
         // chainID = parser_ctx->tx->chainID;
         parser_ctx->currentField++;
         parser_ctx->processingField = false;

@@ -72,3 +72,6 @@ def unpack_sign_tx_response(response: bytes) -> Tuple[int, bytes, int]:
     assert len(response) == 0
 
     return der_sig_len, der_sig, int.from_bytes(v, byteorder='big')
+
+def strip_v_from_signature(signature: bytes) -> bytes:
+    return signature[1:]
