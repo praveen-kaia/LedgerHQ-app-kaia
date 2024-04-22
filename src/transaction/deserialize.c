@@ -473,6 +473,41 @@ static bool processTxCancel(parser_context_t *parser_ctx) {
     return error;
 }
 
+static bool processTxLegacy(parser_context_t *parser_ctx) {
+    bool error = false;
+    switch (parser_ctx->currentField) {
+        case LEGACY_RLP_NONCE:
+            error = processNonce(parser_ctx);
+            break;
+        case LEGACY_RLP_GASPRICE:
+            error = processGasprice(parser_ctx);
+            break;
+        case LEGACY_RLP_STARTGAS:
+            error = processGasLimit(parser_ctx);
+            break;
+        case LEGACY_RLP_TO:
+            error = processTo(parser_ctx);
+            break;
+        case LEGACY_RLP_VALUE:
+            error = processValue(parser_ctx);
+            break;
+        case LEGACY_RLP_DATA:
+            error = processData(parser_ctx);
+            break;
+        case LEGACY_RLP_CHAIN_ID:
+            error = processChainID(parser_ctx);
+            break;
+        case LEGACY_RLP_ZERO1:
+        case LEGACY_RLP_ZERO2:
+            error = processAndDiscard(parser_ctx);
+            break;
+        default:
+            PRINTF("Invalid RLP decoder parser_ctx\n");
+            return true;
+    }
+    return error;
+
+}
 // Actual transaction parsing
 
 parser_status_e transaction_deserialize(buffer_t *buf, transaction_t *tx) {
@@ -512,6 +547,22 @@ parser_status_e transaction_deserialize(buffer_t *buf, transaction_t *tx) {
         }
         if (parser_ctx.outerRLP && !parser_ctx.processingOuterRLPField) {
             parseNestedRlp(&parser_ctx);
+            // Hack to detect the tx type
+            // If the last field parsed was a fieldSingleByte it means the transaction is a Legacy transaction
+            if(parser_ctx.fieldSingleByte){
+                parser_ctx.tx->txType = LEGACY;
+            } else {
+                // The bype after the nested rlp is the tx type,
+                parseRLP(&parser_ctx);
+                parser_ctx.tx->txType = parser_ctx.workBuffer[0];
+                //Cancel changes made by last parseRLP
+                parser_ctx.workBuffer--;
+                parser_ctx.commandLength++;
+                parser_ctx.processingField = false;
+            }
+            PRINTF("Transaction type: %d\n", parser_ctx.tx->txType);
+
+
             continue;
         }
         if (!parser_ctx.processingField) {
@@ -522,21 +573,29 @@ parser_status_e transaction_deserialize(buffer_t *buf, transaction_t *tx) {
         }
 
         PRINTF("Current field: %d\n", parser_ctx.currentField);
-            // switch (parser_ctx.tx->txType) {
+            switch (parser_ctx.tx->txType) {
                 bool fault;
-                // case CANCEL:
+                case LEGACY:
+                    fault = processTxLegacy(&parser_ctx);
+                    if (fault) {
+                        return PARSING_ERROR;
+                    } else {
+                        break;
+                    }
+                case CANCEL:
                 // case FEE_DELEGATED_CANCEL:
                 // case PARTIAL_FEE_DELEGATED_CANCEL:
                     fault = processTxCancel(&parser_ctx);
                     if (fault) {
                         return PARSING_ERROR;
                     } else {
-                        // break;
+                        break;
                     }
-            //     default:
-            //         PRINTF("Transaction type %d is not supported\n", parser_ctx.tx->txType);
-            //         return PARSING_ERROR;
-            // }
+                default:
+                    PRINTF("Transaction type %d is not supported\n", parser_ctx.tx->txType);
+                    return PARSING_ERROR;
+            }
+
     }
 }
 
