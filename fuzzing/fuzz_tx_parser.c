@@ -6,7 +6,7 @@
 #include "transaction/deserialize.h"
 #include "transaction/utils.h"
 #include "transaction/types.h"
-#include "format.h"
+#include "helper/format.h"
 
 int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     buffer_t buf = {.ptr = data, .size = size, .offset = 0};
