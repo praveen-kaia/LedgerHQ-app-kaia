@@ -7,7 +7,6 @@
 
 #include <cmocka.h>
 
-#include "transaction/serialize.h"
 #include "transaction/deserialize.h"
 #include "types.h"
 
@@ -48,14 +47,14 @@ static void test_error_tx_deserialization(void **state) {
 
     parser_status_e status = transaction_deserialize(&buf, &tx);
 
-    assert_int_not_equal(status, PARSING_OK)
+    assert_int_not_equal(status, PARSING_OK);
 
 }
 
 int main() {
-    const struct CMUnitTest tests[] = {
-        cmocka_unit_test(test_tx_deserialization)
-        cmockau_unit_test(test_error_tx_deserialization)
+    const struct CMUnitTest tests[] = { 
+        cmocka_unit_test(test_tx_deserialization),
+        cmocka_unit_test(test_error_tx_deserialization)
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);
