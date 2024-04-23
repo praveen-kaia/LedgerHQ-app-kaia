@@ -25,18 +25,26 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     status = transaction_deserialize(&buf, &tx);
 
     if (status == PARSING_OK) {
-        format_transaction_type(tx.tx_type, type, sizeof(type));
+        format_transaction_type(tx.txType, type, sizeof(type));
         printf("type: %s\n", type);
+
         format_u64(nonce, sizeof(nonce), tx.nonce);
         printf("nonce: %s\n", nonce);
-        format_u64(gasPrice, sizeof(gasPrice), tx.gas_price);
+
+        temp = convertUint256ToUint64(&tx.gasprice);
+        format_u64(gasPrice, sizeof(gasPrice), tx.gasprice);
         printf("gasPrice: %s\n", gasPrice);
+
+        temp = convertUint256ToUint64(&tx.gasLimit);
         format_u64(gasLimit, sizeof(gasLimit), tx.startgas);
         printf("gasLimit: %s\n", gasLimit);
+
         format_hex(tx.to, ADDRESS_LEN, to, sizeof(to));
         printf("destination: %s\n", to);
+
         format_u64(feeRatio, sizeof(feeRatio), tx.ratio);
         printf("feeRatio: %s\n", feeRatio);
+
         ammount_to_string(tx.value, 18, amount, sizeof(amount)); // 18 is the num of decimals
         printf("amount: %s\n", amount);
     }
