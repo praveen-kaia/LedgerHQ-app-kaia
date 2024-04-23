@@ -2,11 +2,23 @@ import pytest
 
 from application_client.klaytn_transaction import Transaction
 from application_client.klaytn_command_sender import KlaytnCommandSender, Errors
-from application_client.klaytn_response_unpacker import unpack_get_public_key_response, unpack_sign_tx_response
+from application_client.klaytn_response_unpacker import strip_v_from_signature, unpack_get_public_key_response, unpack_sign_tx_response
 from ragger.error import ExceptionRAPDU
 from ragger.navigator import NavInsID
 from utils import ROOT_SCREENSHOT_PATH, check_signature_validity
+from ecdsa import VerifyingKey, SECP256k1
+import sha3
 
+
+def verify_transaction_signature_from_public_key(transaction: bytes, signature: bytes, public_key: bytes):
+    try:
+        if len(signature) == 65:
+            signature = strip_v_from_signature(signature)
+        verifying_key = VerifyingKey.from_string(public_key, curve=SECP256k1)    
+        return verifying_key.verify(signature, transaction, hashfunc=sha3.keccak_256)
+    except Exception as e:
+        raise e 
+    
 # In these tests we check the behavior of the device when asked to sign a transaction
 
 
@@ -45,9 +57,9 @@ def perform_test_sign_tx_with_raw_tx(firmware, backend, navigator, test_name, ra
                                                       test_name)
 
     # The device as yielded the result, parse it and ensure that the signature is correct
-    response = client.get_async_response().data
-    _, der_sig, _ = unpack_sign_tx_response(response)
-    assert check_signature_validity(public_key, der_sig, raw_transaction_bytes)
+    signature = client.get_async_response().data
+    result = verify_transaction_signature_from_public_key(raw_transaction_bytes, signature, public_key)
+    assert result, "The signature is not valid"
 
 
 # In this test we send to the device a Cancel transaction to sign and validate it on screen

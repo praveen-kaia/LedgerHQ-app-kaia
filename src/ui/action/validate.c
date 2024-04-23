@@ -54,7 +54,13 @@ static int crypto_sign_message(void) {
     PRINTF("Signature: %.*H\n", sig_len, G_context.tx_info.signature);
 
     G_context.tx_info.signature_len = sig_len;
-    G_context.tx_info.v = (uint8_t)(info & CX_ECCINFO_PARITY_ODD);
+
+    if (info & CX_ECCINFO_PARITY_ODD) {
+         G_context.tx_info.v = CX_ECCINFO_PARITY_ODD;
+    }
+    if (info & CX_ECCINFO_xGTn) {
+        G_context.tx_info.v = CX_ECCINFO_xGTn;
+    }
 
     return 0;
 }

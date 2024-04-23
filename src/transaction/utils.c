@@ -56,3 +56,16 @@ bool transaction_utils_format_memo(const uint8_t *memo,
 
     return true;
 }
+
+uint32_t u32_from_BE(const uint8_t *in, uint8_t size) {
+    uint8_t i = 0;
+    uint32_t res = 0;
+
+    while (i < size && i < sizeof(res)) {
+        res <<= 8;
+        res |= in[i];
+        i++;
+    }
+
+    return res;
+}

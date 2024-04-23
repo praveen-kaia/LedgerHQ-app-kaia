@@ -37,3 +37,5 @@ bool transaction_utils_format_memo(const uint8_t *memo,
                                    uint64_t memo_len,
                                    char *dst,
                                    uint64_t dst_len);
+
+uint32_t u32_from_BE(const uint8_t *in, uint8_t size);
