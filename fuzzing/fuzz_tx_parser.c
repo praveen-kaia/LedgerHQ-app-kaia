@@ -31,12 +31,12 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
         format_u64(nonce, sizeof(nonce), tx.nonce);
         printf("nonce: %s\n", nonce);
 
-        temp = convertUint256ToUint64(&tx.gasprice);
-        format_u64(gasPrice, sizeof(gasPrice), tx.gasprice);
+        uint64_t temp = convertUint256ToUint64(&tx.gasprice);
+        format_u64(gasPrice, sizeof(gasPrice), temp);
         printf("gasPrice: %s\n", gasPrice);
 
         temp = convertUint256ToUint64(&tx.gasLimit);
-        format_u64(gasLimit, sizeof(gasLimit), tx.startgas);
+        format_u64(gasLimit, sizeof(gasLimit), temp);
         printf("gasLimit: %s\n", gasLimit);
 
         format_hex(tx.to, ADDRESS_LEN, to, sizeof(to));
