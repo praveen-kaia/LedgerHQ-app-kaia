@@ -51,7 +51,6 @@ int helper_send_response_pubkey() {
 }
 
 void format_signature_out(const uint8_t *signature, uint8_t *out) {
-    // memset(G_io_apdu_buffer + 1, 0x00, 64);
     uint8_t offset = 1;
     uint8_t xoffset = 4;  // point to r value
     // copy r
@@ -76,7 +75,7 @@ int helper_send_response_sig() {
     uint8_t resp[1 + MAX_DER_SIG_LEN + 1] = {0};
     size_t offset = 0;
 
-    uint32_t v_out = u32_from_BE(G_context.tx_info.chain_id.value, MIN(4, G_context.tx_info.chain_id.length));
+    uint32_t v_out = u32_from_BE(G_context.tx_info.transaction.chainID.value, MIN(4, G_context.tx_info.transaction.chainID.length));
     resp[offset++] = (v_out * 2) + 35 + G_context.tx_info.v;
     
     format_signature_out(G_context.tx_info.signature, resp);
