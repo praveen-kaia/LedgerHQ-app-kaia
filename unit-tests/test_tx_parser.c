@@ -30,15 +30,32 @@ static void test_tx_deserialization(void **state) {
 
     assert_int_equal(status, PARSING_OK);
 
-    // uint8_t output[300];
-    // int length = transaction_serialize(&tx, output, sizeof(output));
-    // assert_int_equal(length, sizeof(raw_tx));
-    // assert_memory_equal(raw_tx, output, sizeof(raw_tx));
+}
+static void test_error_tx_deserialization(void **state) {
+    (void) state;
+
+    transaction_t tx;
+    // clang-format off
+    uint8_t raw_tx[] = {
+        0xd4, 0x7d, 0x6d, 0x1f, 0x78, 0x97, 0x0b, 0x9c,
+        0xb8, 0x89, 0xb8, 0x3f, 0xc7, 0xc7, 0x07, 0xa0,
+        0x0f, 0x59, 0x87, 0xf1, 0x4e, 0x06, 0x05, 0x8d,
+        0xeb, 0xc4, 0xcb, 0x84, 0xf2, 0xa4, 0x0d, 0xa8,
+        0x7d, 0x08, 0x57, 0x89, 0xbd, 0xc9, 0xb5, 0x10
+    };
+
+    buffer_t buf = {.ptr = raw_tx, .size = sizeof(raw_tx), .offset = 0};
+
+    parser_status_e status = transaction_deserialize(&buf, &tx);
+
+    assert_int_not_equal(status, PARSING_OK)
+
 }
 
 int main() {
     const struct CMUnitTest tests[] = {
         cmocka_unit_test(test_tx_deserialization)
+        cmockau_unit_test(test_error_tx_deserialization)
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);
