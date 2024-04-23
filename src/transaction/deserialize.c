@@ -19,7 +19,6 @@
 #include "deserialize.h"
 #include "utils.h"
 #include "types.h"
-#include "globals.h"
 
 #if defined(TEST) || defined(FUZZ)
 #include "assert.h"
