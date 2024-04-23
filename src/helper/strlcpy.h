@@ -1,8 +1,8 @@
 #include <string.h>
 
-size_t strlcpy(char *dst, const char *src, size_t siz) {
+size_t strlcpy(char *dst, const char *src, size_t size) {
     const char *s = src;
-    size_t left = siz;
+    size_t left = size;
 
     if (left) {
         while (--left != 0) {
@@ -12,8 +12,8 @@ size_t strlcpy(char *dst, const char *src, size_t siz) {
     }
 
     if (left == 0) {
-        if (siz != 0)
-            *dst = '\0';  // Null terminate if size is not zero
+        if (size != 0)
+            *dst = '\0';  // Null terminate if sizee is not zero
         while (*s++)
             ;
     }
