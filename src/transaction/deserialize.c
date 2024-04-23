@@ -15,7 +15,7 @@
  *  limitations under the License.
  *****************************************************************************/
 #include <stdio.h>  // printf
-
+#include <string.h> // memmove
 #include "buffer.h"
 
 #include "deserialize.h"
