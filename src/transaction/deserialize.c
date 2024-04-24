@@ -221,7 +221,7 @@ static bool processType(parser_context_t *parser_ctx) {
     if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
         uint32_t copySize =
             MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
-        copyTxData(parser_ctx, &parser_ctx->tx->txType, copySize);
+        copyTxData(parser_ctx, (uint8_t*) &parser_ctx->tx->txType, copySize);
     }
     if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
         parser_ctx->currentField++;
