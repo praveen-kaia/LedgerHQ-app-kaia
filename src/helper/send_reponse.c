@@ -18,6 +18,7 @@
 #include <stddef.h>  // size_t
 #include <stdint.h>  // uint*_t
 #include <string.h>  // memmove
+#include <stdio.h>  // PRINTF
 
 #include "buffer.h"
 
@@ -29,19 +30,38 @@
 
 #include "../transaction/utils.h"
 
+#define ADDRESS_IN_ASCII_HEX_LEN (ADDRESS_LEN * 2)
+
+// Converts each byte from the input to its ASCII hexadecimal representation in the output
+void hex_to_ascii_hex(const uint8_t *input_hex, uint8_t *output_hex, size_t input_len) {
+    for (size_t i = 0; i < input_len; i++) {
+        // High nibble to ASCII hexadecimal, ensuring upper case
+        int high = (input_hex[i] >> 4) & 0x0F;
+        output_hex[2 * i] = high < 10 ? '0' + high : 'A' + (high - 10);
+
+        // Low nibble to ASCII hexadecimal, ensuring upper case
+        int low = input_hex[i] & 0x0F;
+        output_hex[2 * i + 1] = low < 10 ? '0' + low : 'A' + (low - 10);
+    }
+}
+
 int helper_send_response_pubkey() {
-    uint8_t resp[1 + PUBKEY_LEN + 1 + ADDRESS_LEN + 1 + CHAINCODE_LEN] = {0};
+    uint8_t resp[1 + PUBKEY_LEN + 1 + ADDRESS_IN_ASCII_HEX_LEN + 1 + CHAINCODE_LEN] = {0};
     size_t offset = 0;
 
     resp[offset++] = PUBKEY_LEN;
     memmove(resp + offset, G_context.pk_info.raw_public_key, PUBKEY_LEN);
     offset += PUBKEY_LEN;
 
-    resp[offset++] = ADDRESS_LEN;
-    if (!address_from_pubkey(G_context.pk_info.raw_public_key, resp + offset, ADDRESS_LEN)) {
+    resp[offset++] = ADDRESS_IN_ASCII_HEX_LEN;
+    uint8_t address[ADDRESS_LEN] = {0};
+    if (!address_from_pubkey(G_context.pk_info.raw_public_key, address, ADDRESS_LEN)) {
         return io_send_sw(SW_ADDRESS_FAIL);
-    };
-    offset += ADDRESS_LEN;
+    }
+    PRINTF("Address: %.*H\n", ADDRESS_LEN, address);
+    hex_to_ascii_hex(address, resp + offset, ADDRESS_LEN);
+    PRINTF("Address in ASCII hex: %.*s\n", ADDRESS_IN_ASCII_HEX_LEN, resp + offset);
+    offset += ADDRESS_IN_ASCII_HEX_LEN;
 
     resp[offset++] = CHAINCODE_LEN;
     memmove(resp + offset, G_context.pk_info.chain_code, CHAINCODE_LEN);
@@ -49,6 +69,7 @@ int helper_send_response_pubkey() {
 
     return io_send_response_pointer(resp, offset, SW_OK);
 }
+
 
 void format_signature_out(const uint8_t *signature, uint8_t *out) {
     uint8_t offset = 1;
