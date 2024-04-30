@@ -20,6 +20,8 @@
 #include "utils.h"
 #include "types.h"
 #include "globals.h"
+#include "process_txs.h"
+#include "process_rlp_fields.h"
 
 #if defined(TEST) || defined(FUZZ)
 #include "assert.h"
@@ -113,13 +115,7 @@ bool rlpCanDecode(uint8_t *buffer, uint32_t bufferLength, bool *valid) {
     return true;
 }
 
-static void parseNestedRlp(parser_context_t *parser_ctx) {
-    parseRLP(parser_ctx);
-    parseRLP(parser_ctx);
-    parser_ctx->outerRLP = false;
-}
-
-static parser_status_e parseRLP(parser_context_t *parser_ctx) {
+parser_status_e parseRLP(parser_context_t *parser_ctx) {
     bool canDecode = false;
     uint32_t offset;
     while (parser_ctx->commandLength != 0) {
@@ -173,342 +169,11 @@ static parser_status_e parseRLP(parser_context_t *parser_ctx) {
    return PARSING_CONTINUE;
 }
 
-
-// Functions to process RLP fields
-
-static bool processContent(parser_context_t *parser_ctx) {
-    // Keep the full length for sanity checks, move to the next field
-    if (!parser_ctx->currentFieldIsList) {
-        PRINTF("Invalid type for RLP_CONTENT\n");
-        return true;
-    }
-    parser_ctx->dataLength = parser_ctx->currentFieldLength;
-    parser_ctx->currentField++;
-    parser_ctx->processingField = false;
-    return false;
+static void parseNestedRlp(parser_context_t *parser_ctx) {
+    parseRLP(parser_ctx);
+    parseRLP(parser_ctx);
+    parser_ctx->outerRLP = false;
 }
-
-static bool processAccessList(parser_context_t *parser_ctx) {
-    if (!parser_ctx->currentFieldIsList) {
-        PRINTF("Invalid type for RLP_ACCESS_LIST\n");
-        return true;
-    }
-    if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
-        uint32_t copySize =
-            MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
-        copyTxData(parser_ctx, NULL, copySize);
-    }
-    if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
-        parser_ctx->currentField++;
-        parser_ctx->processingField = false;
-    }
-    return false;
-}
-
-static bool processType(parser_context_t *parser_ctx) {
-    if (parser_ctx->currentFieldIsList) {
-        PRINTF("Invalid type for RLP_TYPE\n");
-        return true;
-    }
-    if (parser_ctx->currentFieldLength > MAX_INT256) {
-        PRINTF("Invalid length for RLP_TYPE\n");
-        return true;
-    }
-    if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
-        uint32_t copySize =
-            MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
-        copyTxData(parser_ctx, &parser_ctx->tx->txType, copySize);
-    }
-    if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
-        parser_ctx->currentField++;
-        parser_ctx->processingField = false;
-    }
-    return false;
-}
-
-static bool processChainID(parser_context_t *parser_ctx) {
-    if (parser_ctx->currentFieldIsList) {
-        PRINTF("Invalid type for RLP_CHAINID\n");
-        return true;
-    }
-    if (parser_ctx->currentFieldLength > MAX_INT256) {
-        PRINTF("Invalid length for RLP_CHAINID\n");
-        return true;
-    }
-    if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
-        uint32_t copySize =
-            MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
-        copyTxData(parser_ctx, parser_ctx->tx->chainID.value, copySize);
-    }
-    if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
-        parser_ctx->tx->chainID.length = parser_ctx->currentFieldLength;
-
-        // copy chainId again to G_context.tx_info.chain_id
-        memmove(G_context.tx_info.chain_id.value, parser_ctx->tx->chainID.value, parser_ctx->tx->chainID.length);
-        G_context.tx_info.chain_id.length = parser_ctx->tx->chainID.length;
-
-        // chainID = parser_ctx->tx->chainID;
-        parser_ctx->currentField++;
-        parser_ctx->processingField = false;
-    }
-    return false;
-}
-
-static bool processNonce(parser_context_t *parser_ctx) {
-    if (parser_ctx->currentFieldIsList) {
-        PRINTF("Invalid type for RLP_NONCE\n");
-        return true;
-    }
-    if (parser_ctx->currentFieldLength > MAX_INT256) {
-        PRINTF("Invalid length for RLP_NONCE\n");
-        return true;
-    }
-    if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
-        uint32_t copySize =
-            MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
-        copyTxData(parser_ctx, &parser_ctx->tx->nonce, copySize);
-    }
-    if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
-        parser_ctx->currentField++;
-        parser_ctx->processingField = false;
-    }
-    return false;
-}
-
-static bool processStartGas(parser_context_t *parser_ctx) {
-    if (parser_ctx->currentFieldIsList) {
-        PRINTF("Invalid type for RLP_STARTGAS\n");
-        return true;
-    }
-    if (parser_ctx->currentFieldLength > MAX_INT256) {
-        PRINTF("Invalid length for RLP_STARTGAS %d\n", parser_ctx->currentFieldLength);
-        return true;
-    }
-    if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
-        uint32_t copySize =
-            MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
-        copyTxData(parser_ctx, parser_ctx->tx->startgas.value + parser_ctx->currentFieldPos, copySize);
-    }
-    if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
-        parser_ctx->tx->startgas.length = parser_ctx->currentFieldLength;
-        parser_ctx->currentField++;
-        parser_ctx->processingField = false;
-    }
-    return false;
-}
-
-// Alias over `processStartGas()`.
-static bool processGasLimit(parser_context_t *parser_ctx) {
-    return processStartGas(parser_ctx);
-}
-
-static bool processGasprice(parser_context_t *parser_ctx) {
-    if (parser_ctx->currentFieldIsList) {
-        PRINTF("Invalid type for RLP_GASPRICE\n");
-        return true;
-    }
-    if (parser_ctx->currentFieldLength > MAX_INT256) {
-        PRINTF("Invalid length for RLP_GASPRICE\n");
-        return true;
-    }
-    if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
-        uint32_t copySize =
-            MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
-        copyTxData(parser_ctx, parser_ctx->tx->gasprice.value + parser_ctx->currentFieldPos, copySize);
-    }
-    if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
-        parser_ctx->tx->gasprice.length = parser_ctx->currentFieldLength;
-        parser_ctx->currentField++;
-        parser_ctx->processingField = false;
-    }
-    return false;
-}
-
-static bool processValue(parser_context_t *parser_ctx) {
-    if (parser_ctx->currentFieldIsList) {
-        PRINTF("Invalid type for RLP_VALUE\n");
-        return true;
-    }
-    if (parser_ctx->currentFieldLength > MAX_INT256) {
-        PRINTF("Invalid length for RLP_VALUE\n");
-        return true;
-    }
-    if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
-        uint32_t copySize =
-            MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
-        copyTxData(parser_ctx, parser_ctx->tx->value.value + parser_ctx->currentFieldPos, copySize);
-    }
-    if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
-        parser_ctx->tx->value.length = parser_ctx->currentFieldLength;
-        parser_ctx->currentField++;
-        parser_ctx->processingField = false;
-    }
-    return false;
-}
-
-static bool processTo(parser_context_t *parser_ctx) {
-    if (parser_ctx->currentFieldIsList) {
-        PRINTF("Invalid type for RLP_TO\n");
-        return true;
-    }
-    if (parser_ctx->currentFieldLength > ADDRESS_LEN) {
-        PRINTF("Invalid length for RLP_TO\n");
-        return true;
-    }
-    if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
-        uint32_t copySize =
-            MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
-        copyTxData(parser_ctx, parser_ctx->tx->to + parser_ctx->currentFieldPos, copySize);
-    }
-    if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
-        // parser_ctx->tx->destinationLength = parser_ctx->currentFieldLength;
-        parser_ctx->currentField++;
-        parser_ctx->processingField = false;
-    }
-    return false;
-}
-
-static bool processData(parser_context_t *parser_ctx) {
-    PRINTF("PROCESS DATA\n");
-    if (parser_ctx->currentFieldIsList) {
-        PRINTF("Invalid type for RLP_DATA\n");
-        return true;
-    }
-    if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
-        uint32_t copySize =
-            MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
-        // If there is no data, set dataPresent to false.
-        if (copySize == 1 && *parser_ctx->workBuffer == 0x00) {
-            parser_ctx->tx->dataPresent = false;
-        }
-        copyTxData(parser_ctx, NULL, copySize);
-    }
-    if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
-        PRINTF("incrementing field\n");
-        parser_ctx->currentField++;
-        parser_ctx->processingField = false;
-    }
-    return false;
-}
-
-static bool processAndDiscard(parser_context_t *parser_ctx) {
-    if (parser_ctx->currentFieldIsList) {
-        PRINTF("Invalid type for Discarded field\n");
-        return true;
-    }
-    if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
-        uint32_t copySize =
-            MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
-        copyTxData(parser_ctx, NULL, copySize);
-    }
-    if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
-        parser_ctx->currentField++;
-        parser_ctx->processingField = false;
-    }
-    return false;
-}
-
-static bool processRatio(parser_context_t *parser_ctx) {
-    if (parser_ctx->currentFieldIsList) {
-        PRINTF("Invalid type for RLP_RATIO\n");
-        return true;
-    }
-    if (parser_ctx->currentFieldLength > MAX_INT256) {
-        PRINTF("Invalid length for RLP_RATIO\n");
-        return true;
-    }
-    if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
-        uint32_t copySize =
-            MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
-        copyTxData(parser_ctx, &parser_ctx->tx->ratio + parser_ctx->currentFieldPos, copySize);
-    }
-    if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
-        parser_ctx->currentField++;
-        parser_ctx->processingField = false;
-    }
-    return false;
-}
-
-// Transaction processing functions
-
-static bool processTxCancel(parser_context_t *parser_ctx) {
-    bool error = false;
-    switch (parser_ctx->currentField) {
-        case CANCEL_RLP_CONTENT:
-            error = processContent(parser_ctx);
-            break;
-        case CANCEL_RLP_TYPE:
-            error = processType(parser_ctx);
-            break;
-        case CANCEL_RLP_NONCE:
-            error = processNonce(parser_ctx);
-            break;
-        case CANCEL_RLP_GASPRICE:
-            error = processGasprice(parser_ctx);
-            break;
-        case CANCEL_RLP_GASLIMIT:
-            error = processGasLimit(parser_ctx);
-            break;
-        case CANCEL_RLP_FROM:
-            error = processAndDiscard(parser_ctx);
-            // Skip ratio if not partial fee delegated txType
-            if (parser_ctx->feePayerType != PARTIAL_FEE_DELEGATED) {
-                parser_ctx->currentField++;
-            }
-            break;
-        case CANCEL_RLP_RATIO:
-            error = processRatio(parser_ctx);
-            break;
-        case CANCEL_RLP_CHAIN_ID:
-            error = processChainID(parser_ctx);
-            break;
-        case CANCEL_RLP_ZERO1:
-        case CANCEL_RLP_ZERO2:
-            error = processAndDiscard(parser_ctx);
-            break;
-        default:
-            PRINTF("Invalid RLP decoder parser_ctx\n");
-            return true;
-    }
-    return error;
-}
-
-static bool processTxLegacy(parser_context_t *parser_ctx) {
-    bool error = false;
-    switch (parser_ctx->currentField) {
-        case LEGACY_RLP_NONCE:
-            error = processNonce(parser_ctx);
-            break;
-        case LEGACY_RLP_GASPRICE:
-            error = processGasprice(parser_ctx);
-            break;
-        case LEGACY_RLP_STARTGAS:
-            error = processGasLimit(parser_ctx);
-            break;
-        case LEGACY_RLP_TO:
-            error = processTo(parser_ctx);
-            break;
-        case LEGACY_RLP_VALUE:
-            error = processValue(parser_ctx);
-            break;
-        case LEGACY_RLP_DATA:
-            error = processData(parser_ctx);
-            break;
-        case LEGACY_RLP_CHAIN_ID:
-            error = processChainID(parser_ctx);
-            break;
-        case LEGACY_RLP_ZERO1:
-        case LEGACY_RLP_ZERO2:
-            error = processAndDiscard(parser_ctx);
-            break;
-        default:
-            PRINTF("Invalid RLP decoder parser_ctx\n");
-            return true;
-    }
-    return error;
-
-}
-// Actual transaction parsing
 
 parser_status_e transaction_deserialize(buffer_t *buf, transaction_t *tx) {
     LEDGER_ASSERT(buf != NULL, "NULL buf");
@@ -552,12 +217,14 @@ parser_status_e transaction_deserialize(buffer_t *buf, transaction_t *tx) {
             if(parser_ctx.fieldSingleByte){
                 parser_ctx.tx->txType = LEGACY;
             } else {
-                // The bype after the nested rlp is the tx type,
+                // Save commandLength before calling parseRLP
+                uint8_t rlpStartCommandLength = parser_ctx.commandLength;
+                // The byte after the nested rlp is the tx type,
                 parseRLP(&parser_ctx);
                 parser_ctx.tx->txType = parser_ctx.workBuffer[0];
-                //Cancel changes made by last parseRLP
-                parser_ctx.workBuffer--;
-                parser_ctx.commandLength++;
+                // Return to the start of the nested RLP
+                parser_ctx.workBuffer -= rlpStartCommandLength - parser_ctx.commandLength;
+                parser_ctx.commandLength += rlpStartCommandLength - parser_ctx.commandLength;
                 parser_ctx.processingField = false;
             }
             PRINTF("Transaction type: %d\n", parser_ctx.tx->txType);
@@ -579,18 +246,48 @@ parser_status_e transaction_deserialize(buffer_t *buf, transaction_t *tx) {
                     fault = processTxLegacy(&parser_ctx);
                     if (fault) {
                         return PARSING_ERROR;
-                    } else {
-                        break;
                     }
+                    break;
+                case VALUE_TRANSFER:
+                case FEE_DELEGATED_VALUE_TRANSFER:
+                case PARTIAL_FEE_DELEGATED_VALUE_TRANSFER:
+                    fault = processTxValueTransfer(&parser_ctx);
+                    if (fault) {
+                        return PARSING_ERROR;
+                    }
+                    break;
+                case VALUE_TRANSFER_MEMO:
+                case FEE_DELEGATED_VALUE_TRANSFER_MEMO:
+                case PARTIAL_FEE_DELEGATED_VALUE_TRANSFER_MEMO:
+                    fault = processTxValueTransferMemo(&parser_ctx);
+                    if (fault) {
+                        return PARSING_ERROR;
+                    }
+                    break;
+                case SMART_CONTRACT_DEPLOY:
+                case FEE_DELEGATED_SMART_CONTRACT_DEPLOY:
+                case PARTIAL_FEE_DELEGATED_SMART_CONTRACT_DEPLOY:
+                    fault = processTxSmartContractDeploy(&parser_ctx);
+                    if (fault) {
+                        return PARSING_ERROR;
+                    }
+                    break;
+                case SMART_CONTRACT_EXECUTION:
+                case FEE_DELEGATED_SMART_CONTRACT_EXECUTION:
+                case PARTIAL_FEE_DELEGATED_SMART_CONTRACT_EXECUTION:
+                    fault = processTxSmartContractExecution(&parser_ctx);
+                    if (fault) {
+                        return PARSING_ERROR;
+                    }
+                    break;
                 case CANCEL:
-                // case FEE_DELEGATED_CANCEL:
-                // case PARTIAL_FEE_DELEGATED_CANCEL:
+                case FEE_DELEGATED_CANCEL:
+                case PARTIAL_FEE_DELEGATED_CANCEL:
                     fault = processTxCancel(&parser_ctx);
                     if (fault) {
                         return PARSING_ERROR;
-                    } else {
-                        break;
                     }
+                    break;
                 default:
                     PRINTF("Transaction type %d is not supported\n", parser_ctx.tx->txType);
                     return PARSING_ERROR;

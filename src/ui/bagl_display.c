@@ -37,6 +37,8 @@
 #include "../helper/format.h"
 #include "../menu.h"
 
+#define MAX_FLOW_STEPS 18
+
 static action_validate_cb g_validate_callback;
 static char g_type[50];
 static char g_nonce[30];
@@ -187,48 +189,110 @@ UX_STEP_NOCB(ux_display_amount_step,
                  .text = g_amount,
              });
 
-// FLOW to display transaction information:
-// #1 screen: eye icon + "Review Transaction"
-// #2 screen: display transaction type
-// #3 screen: display nonce
-// #4 screen: display gas price
-// #5 screen: display gas limit
-// #6 screen: display destination/smart contract address (not always present)
-// #7 screen: display fee ratio (not always present)
-// #8 screen: display amount (not always present)
-// #9 screen: approve button
-// #10 screen: reject button
-UX_FLOW(ux_display_transaction_flow,
+ UX_FLOW(ux_display_legacy_transaction_flow,
         &ux_display_review_step,
         &ux_display_type_step,
-        &ux_display_nonce_step,
-        &ux_display_gas_price_step,
-        &ux_display_gas_limit_step,
-        &ux_display_to_step, // or ux_display_smart_contract_step
-        &ux_display_fee_ratio_step,
         &ux_display_amount_step,
-        &ux_display_approve_step,
-        &ux_display_reject_step);
-
-UX_FLOW(ux_display_legacy_transaction_flow,
-        &ux_display_review_step,
-        &ux_display_type_step,
-        &ux_display_nonce_step,
-        &ux_display_gas_price_step,
-        &ux_display_gas_limit_step,
         &ux_display_to_step,
-        &ux_display_amount_step,
-        &ux_display_approve_step,
-        &ux_display_reject_step);
-
-UX_FLOW(ux_display_cancel_transaction_flow,
-        &ux_display_review_step,
-        &ux_display_type_step,
         &ux_display_nonce_step,
         &ux_display_gas_price_step,
         &ux_display_gas_limit_step,
         &ux_display_approve_step,
         &ux_display_reject_step);
+
+static void handle_display_legacy() {
+    ux_flow_init(0, ux_display_legacy_transaction_flow, NULL);
+}
+
+static void handle_display_value_transfer(){
+    ux_flow_step_t static const *ux_display_flow[MAX_FLOW_STEPS];
+    int current_step = 0;
+
+    ux_display_flow[current_step++] = &ux_display_review_step;
+    ux_display_flow[current_step++] = &ux_display_type_step;
+    ux_display_flow[current_step++] = &ux_display_amount_step;
+    ux_display_flow[current_step++] = &ux_display_to_step;
+    ux_display_flow[current_step++] = &ux_display_nonce_step;
+    ux_display_flow[current_step++] = &ux_display_gas_price_step;
+    ux_display_flow[current_step++] = &ux_display_gas_limit_step;
+
+    if (G_context.tx_info.transaction.ratio != 0) {
+        ux_display_flow[current_step++] = &ux_display_fee_ratio_step;
+    }
+
+    ux_display_flow[current_step++] = &ux_display_approve_step;
+    ux_display_flow[current_step++] = &ux_display_reject_step;
+    ux_display_flow[current_step++] = FLOW_END_STEP;
+
+    ux_flow_init(0, ux_display_flow, NULL);
+}
+
+static void handle_display_smart_contract_deploy_display() {
+    ux_flow_step_t static const *ux_display_flow[MAX_FLOW_STEPS];
+    int current_step = 0;
+
+    ux_display_flow[current_step++] = &ux_display_review_step;
+    ux_display_flow[current_step++] = &ux_display_type_step;
+    ux_display_flow[current_step++] = &ux_display_amount_step;
+    ux_display_flow[current_step++] = &ux_display_nonce_step;
+    ux_display_flow[current_step++] = &ux_display_gas_price_step;
+    ux_display_flow[current_step++] = &ux_display_gas_limit_step;
+
+    if (G_context.tx_info.transaction.ratio != 0) {
+        ux_display_flow[current_step++] = &ux_display_fee_ratio_step;
+    }
+
+    ux_display_flow[current_step++] = &ux_display_approve_step;
+    ux_display_flow[current_step++] = &ux_display_reject_step;
+    ux_display_flow[current_step++] = FLOW_END_STEP;
+
+    ux_flow_init(0, ux_display_flow, NULL);
+}
+
+static void handle_display_smart_contract_execution_display() {
+    ux_flow_step_t static const *ux_display_flow[MAX_FLOW_STEPS];
+    int current_step = 0;
+
+    ux_display_flow[current_step++] = &ux_display_review_step;
+    ux_display_flow[current_step++] = &ux_display_type_step;
+    ux_display_flow[current_step++] = &ux_display_amount_step;
+    ux_display_flow[current_step++] = &ux_display_smart_contract_step;
+    ux_display_flow[current_step++] = &ux_display_nonce_step;
+    ux_display_flow[current_step++] = &ux_display_gas_price_step;
+    ux_display_flow[current_step++] = &ux_display_gas_limit_step;
+
+    if (G_context.tx_info.transaction.ratio != 0) {
+        ux_display_flow[current_step++] = &ux_display_fee_ratio_step;
+    }
+
+    ux_display_flow[current_step++] = &ux_display_approve_step;
+    ux_display_flow[current_step++] = &ux_display_reject_step;
+    ux_display_flow[current_step++] = FLOW_END_STEP;
+
+    ux_flow_init(0, ux_display_flow, NULL);
+}
+
+
+static void handle_display_cancel() {
+    ux_flow_step_t static const *ux_display_flow[MAX_FLOW_STEPS];
+    int current_step = 0;
+
+    ux_display_flow[current_step++] = &ux_display_review_step;
+    ux_display_flow[current_step++] = &ux_display_type_step;
+    ux_display_flow[current_step++] = &ux_display_nonce_step;
+    ux_display_flow[current_step++] = &ux_display_gas_price_step;
+
+    if (G_context.tx_info.transaction.ratio != 0) {
+        ux_display_flow[current_step++] = &ux_display_fee_ratio_step;
+    }
+
+    ux_display_flow[current_step++] = &ux_display_gas_limit_step;
+    ux_display_flow[current_step++] = &ux_display_approve_step;
+    ux_display_flow[current_step++] = &ux_display_reject_step;
+    ux_display_flow[current_step++] = FLOW_END_STEP;
+
+    ux_flow_init(0, ux_display_flow, NULL);
+}
 
 int ui_display_transaction() {
     if (G_context.req_type != CONFIRM_TRANSACTION || G_context.state != STATE_PARSED) {
@@ -251,9 +315,8 @@ int ui_display_transaction() {
     strncpy(g_type, type, sizeof(g_type));
 
     char nonce[30] = {0};
-    if(!format_u64(nonce,
-                   sizeof(nonce),
-                   G_context.tx_info.transaction.nonce)) {
+    uint64_t nonceValue = convertUint256ToUint64(&G_context.tx_info.transaction.nonce);
+    if(!format_u64(nonce, sizeof(nonce), nonceValue)) {
         return io_send_sw(SW_DISPLAY_NONCE_FAIL);
     }
     strncpy(g_nonce, nonce, sizeof(g_nonce));
@@ -281,6 +344,7 @@ int ui_display_transaction() {
         return io_send_sw(SW_DISPLAY_FEERATIO_FAIL);
     }
     strncpy(g_feeRatio, feeRatio, sizeof(g_feeRatio));
+    strncat(g_feeRatio, "%%", 1); // append '%' sign
 
     char amount[50] = {0};
     if (!ammount_to_string(G_context.tx_info.transaction.value,
@@ -295,16 +359,36 @@ int ui_display_transaction() {
 
     switch(G_context.tx_info.transaction.txType) {
         case LEGACY:
-            ux_flow_init(0, ux_display_legacy_transaction_flow, NULL);
+            handle_display_legacy();
+            break;
+        case VALUE_TRANSFER:
+        case FEE_DELEGATED_VALUE_TRANSFER:
+        case PARTIAL_FEE_DELEGATED_VALUE_TRANSFER:
+        case VALUE_TRANSFER_MEMO:
+        case FEE_DELEGATED_VALUE_TRANSFER_MEMO:
+        case PARTIAL_FEE_DELEGATED_VALUE_TRANSFER_MEMO:
+            handle_display_value_transfer();
+            break;
+        case SMART_CONTRACT_DEPLOY:
+        case FEE_DELEGATED_SMART_CONTRACT_DEPLOY:
+        case PARTIAL_FEE_DELEGATED_SMART_CONTRACT_DEPLOY:
+            handle_display_smart_contract_deploy_display();
+            break;
+        case SMART_CONTRACT_EXECUTION:
+        case FEE_DELEGATED_SMART_CONTRACT_EXECUTION:
+        case PARTIAL_FEE_DELEGATED_SMART_CONTRACT_EXECUTION:
+            handle_display_smart_contract_execution_display();
             break;
         case CANCEL:
-            ux_flow_init(0, ux_display_cancel_transaction_flow, NULL);
+        case FEE_DELEGATED_CANCEL:
+        case PARTIAL_FEE_DELEGATED_CANCEL:
+            handle_display_cancel();
             break;
         default:
-            ux_flow_init(0, ux_display_transaction_flow, NULL);
-            break;
+            PRINTF("Transaction type %d is not supported\n", G_context.tx_info.transaction.txType);
+            return DISPLAY_ERROR;
     }
-    return 0;
+    return DISPLAY_OK;
 }
 
 #endif

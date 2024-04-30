@@ -30,6 +30,8 @@ typedef struct uint256_t {
 typedef enum {
     EIP2930 = 0x01,
     EIP1559 = 0x02,
+    
+    LEGACY = 0xc0,
 
     VALUE_TRANSFER = 0x08,
     FEE_DELEGATED_VALUE_TRANSFER = 0x09,
@@ -51,15 +53,14 @@ typedef enum {
     FEE_DELEGATED_CANCEL = 0x39,
     PARTIAL_FEE_DELEGATED_CANCEL = 0x3A,
 
-    LEGACY = 0xc0,
 } transaction_type_e;
 
 typedef struct {
     transaction_type_e txType;      /// transaction type
-    uint8_t nonce;                 /// nonce (8 bytes)
+    uint256_t nonce;                /// nonce
     uint256_t gasprice;
     uint256_t startgas;             /// also known as `gaslimit`
-    uint8_t to[ADDRESS_LEN];                    /// pointer to address (20 bytes)
+    uint8_t to[ADDRESS_LEN];        /// pointer to address (20 bytes)
     uint8_t ratio;                  /// ratio for partial fee delegated tx
     uint256_t value;                /// amount value
     uint256_t chainID;

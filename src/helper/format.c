@@ -28,82 +28,82 @@
 bool format_transaction_type(transaction_type_e txType, char *out, size_t out_len) {
     switch (txType) {
         case VALUE_TRANSFER:
-            if(snprintf(out, out_len, "VALUE_TRANSFER")){
+            if(snprintf(out, out_len, "Value Transfer")){
                 return false;
             };
             break;
         case FEE_DELEGATED_VALUE_TRANSFER:
-            if(snprintf(out, out_len, "FEE_DELEGATED_VALUE_TRANSFER")){
+            if(snprintf(out, out_len, "Fee Delegated Value Transfer")){
                 return false;
             };
             break;
         case PARTIAL_FEE_DELEGATED_VALUE_TRANSFER:
-            if(snprintf(out, out_len, "PARTIAL_FEE_DELEGATED_VALUE_TRANSFER")){
+            if(snprintf(out, out_len, "Partial Fee Delegated Value Transfer")){
                 return false;
             };
             break;
         case VALUE_TRANSFER_MEMO:
-            if(snprintf(out, out_len, "VALUE_TRANSFER_MEMO")){
+            if(snprintf(out, out_len, "Value Transfer Memo")){
                 return false;
             };
             break;
         case FEE_DELEGATED_VALUE_TRANSFER_MEMO:
-            if(snprintf(out, out_len, "FEE_DELEGATED_VALUE_TRANSFER_MEMO")){
+            if(snprintf(out, out_len, "Fee Delegated Value Transfer Memo")){
                 return false;
             };
             break;
         case PARTIAL_FEE_DELEGATED_VALUE_TRANSFER_MEMO:
-            if(snprintf(out, out_len, "PARTIAL_FEE_DELEGATED_VALUE_TRANSFER_MEMO")){
+            if(snprintf(out, out_len, "Partial Fee Delegated Value Transfer Memo")){
                 return false;
             };
             break;
         case SMART_CONTRACT_DEPLOY:
-            if(snprintf(out, out_len, "SMART_CONTRACT_DEPLOY")){
+            if(snprintf(out, out_len, "Smart Contract Deploy")){
                 return false;
             };
             break;
         case FEE_DELEGATED_SMART_CONTRACT_DEPLOY:
-            if(snprintf(out, out_len, "FEE_DELEGATED_SMART_CONTRACT_DEPLOY")){
+            if(snprintf(out, out_len, "Fee Delegated Smart Contract Deploy")){
                 return false;
             };
             break;
         case PARTIAL_FEE_DELEGATED_SMART_CONTRACT_DEPLOY:
-            if(snprintf(out, out_len, "PARTIAL_FEE_DELEGATED_SMART_CONTRACT_DEPLOY")){
+            if(snprintf(out, out_len, "Partial Fee Delegated Smart Contract Deploy")){
                 return false;
             };
             break;
         case SMART_CONTRACT_EXECUTION:
-            if(snprintf(out, out_len, "SMART_CONTRACT_EXECUTION")){
+            if(snprintf(out, out_len, "Smart Contract Execution")){
                 return false;
             };
             break;
         case FEE_DELEGATED_SMART_CONTRACT_EXECUTION:
-            if(snprintf(out, out_len, "FEE_DELEGATED_SMART_CONTRACT_EXECUTION")){
+            if(snprintf(out, out_len, "Fee Delegated Smart Contract Execution")){
                 return false;
             };
             break;
         case PARTIAL_FEE_DELEGATED_SMART_CONTRACT_EXECUTION:
-            if(snprintf(out, out_len, "PARTIAL_FEE_DELEGATED_SMART_CONTRACT_EXECUTION")){
+            if(snprintf(out, out_len, "Partial Fee Delegated Smart Contract Execution")){
                 return false;
             };
             break;
         case CANCEL:
-            if(snprintf(out, out_len, "CANCEL")){
+            if(snprintf(out, out_len, "Cancel")){
                 return false;
             };
             break;
         case FEE_DELEGATED_CANCEL:
-            if(snprintf(out, out_len, "FEE_DELEGATED_CANCEL")){
+            if(snprintf(out, out_len, "Fee Delegated Cancel")){
                 return false;
             };
             break;
         case PARTIAL_FEE_DELEGATED_CANCEL:
-            if(snprintf(out, out_len, "PARTIAL_FEE_DELEGATED_CANCEL")){
+            if(snprintf(out, out_len, "Partial Fee Delegated Cancel")){
                 return false;
             };
             break;
         case LEGACY:
-            if(snprintf(out, out_len, "LEGACY")){
+            if(snprintf(out, out_len, "Legacy")){
                 return false;
             };
             break;

@@ -31,6 +31,80 @@ typedef enum {
     LEGACY_RLP_DONE
 } rlpLegacyTxField_e;
 
+typedef enum rlpValueTransferTxField_e {
+    VALUE_TRANSFER_RLP_NONE = RLP_NONE,
+    VALUE_TRANSFER_RLP_CONTENT,
+    VALUE_TRANSFER_RLP_TYPE,
+    VALUE_TRANSFER_RLP_NONCE,
+    VALUE_TRANSFER_RLP_GASPRICE,
+    VALUE_TRANSFER_RLP_GASLIMIT,
+    VALUE_TRANSFER_RLP_TO,
+    VALUE_TRANSFER_RLP_VALUE,
+    VALUE_TRANSFER_RLP_FROM,
+    VALUE_TRANSFER_RLP_RATIO,
+    VALUE_TRANSFER_RLP_CHAIN_ID,
+    VALUE_TRANSFER_RLP_ZERO1,
+    VALUE_TRANSFER_RLP_ZERO2,
+    VALUE_TRANSFER_RLP_DONE
+} rlpValueTransferTxField_e;
+
+typedef enum rlpValueTransferMemoTxField_e {
+    VALUE_TRANSFER_MEMO_RLP_NONE = RLP_NONE,
+    VALUE_TRANSFER_MEMO_RLP_CONTENT,
+    VALUE_TRANSFER_MEMO_RLP_TYPE,
+    VALUE_TRANSFER_MEMO_RLP_NONCE,
+    VALUE_TRANSFER_MEMO_RLP_GASPRICE,
+    VALUE_TRANSFER_MEMO_RLP_GASLIMIT,
+    VALUE_TRANSFER_MEMO_RLP_TO,
+    VALUE_TRANSFER_MEMO_RLP_VALUE,
+    VALUE_TRANSFER_MEMO_RLP_FROM,
+    VALUE_TRANSFER_MEMO_RLP_DATA,
+    VALUE_TRANSFER_MEMO_RLP_RATIO,
+    VALUE_TRANSFER_MEMO_RLP_CHAIN_ID,
+    VALUE_TRANSFER_MEMO_RLP_ZERO1,
+    VALUE_TRANSFER_MEMO_RLP_ZERO2,
+    VALUE_TRANSFER_MEMO_RLP_DONE
+} rlpValueTransferMemoTxField_e;
+
+typedef enum rlpSmartContractDeployTxField_e {
+    SMART_CONTRACT_DEPLOY_RLP_NONE = RLP_NONE,
+    SMART_CONTRACT_DEPLOY_RLP_CONTENT,
+    SMART_CONTRACT_DEPLOY_RLP_TYPE,
+    SMART_CONTRACT_DEPLOY_RLP_NONCE,
+    SMART_CONTRACT_DEPLOY_RLP_GASPRICE,
+    SMART_CONTRACT_DEPLOY_RLP_GASLIMIT,
+    SMART_CONTRACT_DEPLOY_RLP_TO,
+    SMART_CONTRACT_DEPLOY_RLP_VALUE,
+    SMART_CONTRACT_DEPLOY_RLP_FROM,
+    SMART_CONTRACT_DEPLOY_RLP_DATA,
+    SMART_CONTRACT_DEPLOY_RLP_HUMAN_READABLE,
+    SMART_CONTRACT_DEPLOY_RLP_RATIO,
+    SMART_CONTRACT_DEPLOY_RLP_CODE_FORMAT,
+    SMART_CONTRACT_DEPLOY_RLP_CHAIN_ID,
+    SMART_CONTRACT_DEPLOY_RLP_ZERO1,
+    SMART_CONTRACT_DEPLOY_RLP_ZERO2,
+    SMART_CONTRACT_DEPLOY_RLP_DONE
+} rlpSmartContractDeployTxField_e;
+
+typedef enum rlpSmartContractExecutionTxField_e {
+    SMART_CONTRACT_EXECUTION_RLP_NONE = RLP_NONE,
+    SMART_CONTRACT_EXECUTION_RLP_CONTENT,
+    SMART_CONTRACT_EXECUTION_RLP_TYPE,
+    SMART_CONTRACT_EXECUTION_RLP_NONCE,
+    SMART_CONTRACT_EXECUTION_RLP_GASPRICE,
+    SMART_CONTRACT_EXECUTION_RLP_GASLIMIT,
+    SMART_CONTRACT_EXECUTION_RLP_TO,
+    SMART_CONTRACT_EXECUTION_RLP_VALUE,
+    SMART_CONTRACT_EXECUTION_RLP_FROM,
+    SMART_CONTRACT_EXECUTION_RLP_DATA,
+    SMART_CONTRACT_EXECUTION_RLP_RATIO,
+    SMART_CONTRACT_EXECUTION_RLP_CHAIN_ID,
+    SMART_CONTRACT_EXECUTION_RLP_ZERO1,
+    SMART_CONTRACT_EXECUTION_RLP_ZERO2,
+    SMART_CONTRACT_EXECUTION_RLP_DONE
+
+} rlpSmartContractExecutionTxField_e;
+
 /**
  * @brief Enumeration of cancel RLP transaction fields.
  */
@@ -77,7 +151,6 @@ typedef struct {
     uint32_t rlpBufferPos;  /// position in the RLP buffer
     const uint8_t *workBuffer; /// pointer to the buffer being parsed
     transaction_t *tx;  /// pointer to the transaction structure
-    txFeePayerType_e feePayerType; /// if the transaction is basic, fee delegated or partial fee delegated
 } parser_context_t;
 
 /**
@@ -101,7 +174,7 @@ parser_status_e transaction_deserialize(buffer_t *buf, transaction_t *tx);
  * @param[in, out] parsing_ctx Pointer to the parsing context.
  * @return PARSING_OK if success, error status otherwise.
  */
-static parser_status_e parseRLP(parser_context_t *parsing_ctx);
+parser_status_e parseRLP(parser_context_t *parsing_ctx);
 
 /**
  * @def PARSING_IS_DONE(parsing_ctx)
@@ -114,10 +187,26 @@ static parser_status_e parseRLP(parser_context_t *parsing_ctx);
  * @return True if parsing is done, false otherwise.
  */
 #define PARSING_IS_DONE(parsing_ctx)                                                                     \
-        ((parsing_ctx.tx->txType == LEGACY && parsing_ctx.currentField == LEGACY_RLP_DONE)||                  \
-        ((parsing_ctx.tx->txType == CANCEL || parsing_ctx.tx->txType == FEE_DELEGATED_CANCEL ||                 \
-            parsing_ctx.tx->txType == PARTIAL_FEE_DELEGATED_CANCEL) &&                                           \
-            parsing_ctx.currentField == CANCEL_RLP_DONE))
+        ((parsing_ctx.tx->txType == LEGACY && parsing_ctx.currentField == LEGACY_RLP_DONE)||             \
+        ((parsing_ctx.tx->txType == CANCEL || parsing_ctx.tx->txType == FEE_DELEGATED_CANCEL ||          \
+            parsing_ctx.tx->txType == PARTIAL_FEE_DELEGATED_CANCEL) &&                                   \
+            parsing_ctx.currentField == CANCEL_RLP_DONE) ||                                              \
+        ((parsing_ctx.tx->txType == VALUE_TRANSFER ||                                                    \
+          parsing_ctx.tx->txType == FEE_DELEGATED_VALUE_TRANSFER ||                                      \
+          parsing_ctx.tx->txType == PARTIAL_FEE_DELEGATED_VALUE_TRANSFER) &&                             \
+        parsing_ctx.currentField == VALUE_TRANSFER_RLP_DONE) ||                                          \
+        ((parsing_ctx.tx->txType == VALUE_TRANSFER_MEMO ||                                               \
+          parsing_ctx.tx->txType == FEE_DELEGATED_VALUE_TRANSFER_MEMO ||                                 \
+          parsing_ctx.tx->txType == PARTIAL_FEE_DELEGATED_VALUE_TRANSFER_MEMO) &&                        \
+        parsing_ctx.currentField == VALUE_TRANSFER_MEMO_RLP_DONE) ||                                     \
+        ((parsing_ctx.tx->txType == SMART_CONTRACT_DEPLOY ||                                             \
+          parsing_ctx.tx->txType == FEE_DELEGATED_SMART_CONTRACT_DEPLOY ||                               \
+          parsing_ctx.tx->txType == PARTIAL_FEE_DELEGATED_SMART_CONTRACT_DEPLOY) &&                      \
+        parsing_ctx.currentField == SMART_CONTRACT_DEPLOY_RLP_DONE) ||                                   \
+        ((parsing_ctx.tx->txType == SMART_CONTRACT_EXECUTION ||                                          \
+          parsing_ctx.tx->txType == FEE_DELEGATED_SMART_CONTRACT_EXECUTION ||                            \
+          parsing_ctx.tx->txType == PARTIAL_FEE_DELEGATED_SMART_CONTRACT_EXECUTION) &&                   \
+        parsing_ctx.currentField == SMART_CONTRACT_EXECUTION_RLP_DONE))
 
 /**
  * @brief Copy transaction data to the output buffer.
