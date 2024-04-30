@@ -14,12 +14,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *****************************************************************************/
+#include <stdio.h>  // printf
+#include <string.h> // memmove
 #include "buffer.h"
 
 #include "deserialize.h"
 #include "utils.h"
 #include "types.h"
-#include "globals.h"
 
 #if defined(TEST) || defined(FUZZ)
 #include "assert.h"
@@ -28,6 +29,9 @@
 #include "ledger_assert.h"
 #endif
 
+#ifndef PRINTF
+#define PRINTF printf
+#endif
 // RLP related
 
 bool rlpDecodeLength(uint8_t *buffer, uint32_t *fieldLength, uint32_t *offset, bool *list) {
@@ -217,7 +221,7 @@ static bool processType(parser_context_t *parser_ctx) {
     if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
         uint32_t copySize =
             MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
-        copyTxData(parser_ctx, &parser_ctx->tx->txType, copySize);
+        copyTxData(parser_ctx, (uint8_t*) &parser_ctx->tx->txType, copySize);
     }
     if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
         parser_ctx->currentField++;

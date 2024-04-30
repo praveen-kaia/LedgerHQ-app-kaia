@@ -6,30 +6,47 @@
 #include "transaction/deserialize.h"
 #include "transaction/utils.h"
 #include "transaction/types.h"
-#include "format.h"
+#include "helper/format.h"
 
 int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     buffer_t buf = {.ptr = data, .size = size, .offset = 0};
     transaction_t tx;
     parser_status_e status;
-    char nonce[21] = {0};
-    char address[21] = {0};
-    char amount[21] = {0};
-    char tx_memo[466] = {0};
-
+    char type[50] = {0};
+    char nonce[30] = {0};
+    char gasPrice[30] = {0};
+    char gasLimit[30] = {0};
+    char to[43] = {0};
+    char address[43] = {0};
+    char feeRatio[30] = {0};
+    char amount[50] = {0};
     memset(&tx, 0, sizeof(tx));
 
     status = transaction_deserialize(&buf, &tx);
 
     if (status == PARSING_OK) {
+        format_transaction_type(tx.txType, type, sizeof(type));
+        printf("type: %s\n", type);
+
         format_u64(nonce, sizeof(nonce), tx.nonce);
         printf("nonce: %s\n", nonce);
-        format_hex(tx.to, ADDRESS_LEN, address, sizeof(address));
-        printf("address: %s\n", address);
-        format_fpu64(amount, sizeof(amount), tx.value, 3);  // exponent of smallest unit is 3
+
+        uint64_t temp = convertUint256ToUint64(&tx.gasprice);
+        format_u64(gasPrice, sizeof(gasPrice), temp);
+        printf("gasPrice: %s\n", gasPrice);
+
+        temp = convertUint256ToUint64(&tx.startgas);
+        format_u64(gasLimit, sizeof(gasLimit), temp);
+        printf("gasLimit: %s\n", gasLimit);
+
+        format_hex(tx.to, ADDRESS_LEN, to, sizeof(to));
+        printf("destination: %s\n", to);
+
+        format_u64(feeRatio, sizeof(feeRatio), tx.ratio);
+        printf("feeRatio: %s\n", feeRatio);
+
+        ammount_to_string(tx.value, 18, amount, sizeof(amount)); // 18 is the num of decimals
         printf("amount: %s\n", amount);
-        transaction_utils_format_memo(tx.memo, tx.memo_len, tx_memo, sizeof(tx_memo));
-        printf("memo: %s\n", tx_memo);
     }
 
     return 0;

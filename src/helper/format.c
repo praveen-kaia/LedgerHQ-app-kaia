@@ -21,6 +21,10 @@
 #include <string.h> // memcpy
 #include <stdio.h> // snprintf
 
+#ifndef strlcpy
+#include "strlcpy.h"
+#endif
+
 #include "format.h"
 #include "../transaction/types.h"
 
