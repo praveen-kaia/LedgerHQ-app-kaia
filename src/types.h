@@ -53,7 +53,6 @@ typedef struct {
     uint8_t signature[MAX_DER_SIG_LEN];   /// transaction signature encoded in DER
     uint8_t signature_len;                /// length of transaction signature
     uint8_t v;                            /// parity of y-coordinate of R in ECDSA signature
-    uint256_t chain_id;                   /// chain ID
 } transaction_ctx_t;
 
 /**

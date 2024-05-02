@@ -14,6 +14,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *****************************************************************************/
+#include <stdio.h>  // printf
+#include <string.h> // memmove
 #include "buffer.h"
 
 #include "deserialize.h"
@@ -30,6 +32,9 @@
 #include "ledger_assert.h"
 #endif
 
+#ifndef PRINTF
+#define PRINTF printf
+#endif
 // RLP related
 
 bool rlpDecodeLength(uint8_t *buffer, uint32_t *fieldLength, uint32_t *offset, bool *list) {
