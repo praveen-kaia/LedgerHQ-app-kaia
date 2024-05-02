@@ -128,8 +128,7 @@ bool ammount_to_string(const uint256_t amount,
     }
 
     uint8_t amount_len = strnlen(tmp_buffer, sizeof(tmp_buffer));
-    uint32_t copySize = out_buffer_size;
-
+    
     if (adjustDecimals(tmp_buffer,
                        amount_len,
                        out_buffer ,
