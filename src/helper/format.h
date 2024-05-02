@@ -13,7 +13,6 @@
 
 bool format_transaction_type(transaction_type_e txType, char *out, size_t out_len);
 
-
 /**
  * Converts a uint256 value to a decimal string representation.
  *
@@ -30,10 +29,11 @@ bool uint256_to_decimal(uint256_t value, char *out, size_t out_len);
  * @param bytes The uint256 value to convert.
  * @return Returns the converted uint64_t value.
  */
-uint64_t convertUint256ToUint64(const uint256_t* bytes);
+uint64_t convertUint256ToUint64(const uint256_t *bytes);
 
 /**
- * Converts an amount represented by a uint256 value to a string representation with a specified number of decimals.
+ * Converts an amount represented by a uint256 value to a string representation with a specified
+ * number of decimals.
  *
  * @param amount The uint256 value representing the amount.
  * @param decimals The number of decimals to include in the string representation.
@@ -41,7 +41,10 @@ uint64_t convertUint256ToUint64(const uint256_t* bytes);
  * @param out_buffer_size The size of the output buffer.
  * @return Returns true if the conversion is successful, false otherwise.
  */
-bool ammount_to_string(const uint256_t amount, uint8_t decimals, char *out_buffer, size_t out_buffer_size);
+bool ammount_to_string(const uint256_t amount,
+                       uint8_t decimals,
+                       char *out_buffer,
+                       size_t out_buffer_size);
 
 /**
  * Adjusts the number of decimals in a string representation of a value.
@@ -53,7 +56,11 @@ bool ammount_to_string(const uint256_t amount, uint8_t decimals, char *out_buffe
  * @param decimals The number of decimals to adjust to.
  * @return Returns true if the adjustment is successful, false otherwise.
  */
-bool adjustDecimals(const char *src, size_t srcLength, char *target, size_t targetLength, uint8_t decimals);
+bool adjustDecimals(const char *src,
+                    size_t srcLength,
+                    char *target,
+                    size_t targetLength,
+                    uint8_t decimals);
 
 /**
  * Checks if a buffer contains all zeroes.

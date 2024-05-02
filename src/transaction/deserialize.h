@@ -126,31 +126,28 @@ typedef enum {
 /**
  * @brief Enumeration of transaction fee payer types.
  */
-typedef enum {
-    BASIC = 0,
-    FEE_DELEGATED = 1,
-    PARTIAL_FEE_DELEGATED = 2
-} txFeePayerType_e;
+typedef enum { BASIC = 0, FEE_DELEGATED = 1, PARTIAL_FEE_DELEGATED = 2 } txFeePayerType_e;
 
 /**
  * @brief Structure representing the parsing context.
  */
 typedef struct {
-    uint8_t txType;  /// transaction type
-    uint8_t currentField;  /// current field being parsed
-    uint32_t currentFieldPos; /// position in the current field
-    uint32_t currentFieldLength; /// length of the current field
-    bool currentFieldIsList; /// flag to indicate if the current field is a list
-    uint8_t processingField;  /// flag to indicate if a field is being processed
-    bool fieldSingleByte;  /// flag to indicate if the field is a single byte
-    bool outerRLP; /// flag to indicate if the outer RLP is being processed
-    bool processingOuterRLPField; /// flag to indicate if a field in the outer RLP is being processed
-    uint8_t commandLength;  /// length of the command
-    uint32_t dataLength;  /// length of the data
-    uint8_t rlpBuffer[5];  /// buffer to store RLP data
-    uint32_t rlpBufferPos;  /// position in the RLP buffer
-    const uint8_t *workBuffer; /// pointer to the buffer being parsed
-    transaction_t *tx;  /// pointer to the transaction structure
+    uint8_t txType;                /// transaction type
+    uint8_t currentField;          /// current field being parsed
+    uint32_t currentFieldPos;      /// position in the current field
+    uint32_t currentFieldLength;   /// length of the current field
+    bool currentFieldIsList;       /// flag to indicate if the current field is a list
+    uint8_t processingField;       /// flag to indicate if a field is being processed
+    bool fieldSingleByte;          /// flag to indicate if the field is a single byte
+    bool outerRLP;                 /// flag to indicate if the outer RLP is being processed
+    bool processingOuterRLPField;  /// flag to indicate if a field in the outer RLP is being
+                                   /// processed
+    uint8_t commandLength;         /// length of the command
+    uint32_t dataLength;           /// length of the data
+    uint8_t rlpBuffer[5];          /// buffer to store RLP data
+    uint32_t rlpBufferPos;         /// position in the RLP buffer
+    const uint8_t *workBuffer;     /// pointer to the buffer being parsed
+    transaction_t *tx;             /// pointer to the transaction structure
 } parser_context_t;
 
 /**
@@ -180,33 +177,33 @@ parser_status_e parseRLP(parser_context_t *parsing_ctx);
  * @def PARSING_IS_DONE(parsing_ctx)
  * @brief Macro to check if parsing is done.
  *
- * This macro checks if parsing is complete by evaluating the current parsing context and transaction type.
- * It returns true if parsing is done, and false otherwise.
+ * This macro checks if parsing is complete by evaluating the current parsing context and
+ * transaction type. It returns true if parsing is done, and false otherwise.
  *
  * @param parsing_ctx The parsing context.
  * @return True if parsing is done, false otherwise.
  */
-#define PARSING_IS_DONE(parsing_ctx)                                                                     \
-        ((parsing_ctx.tx->txType == LEGACY && parsing_ctx.currentField == LEGACY_RLP_DONE)||             \
-        ((parsing_ctx.tx->txType == CANCEL || parsing_ctx.tx->txType == FEE_DELEGATED_CANCEL ||          \
-            parsing_ctx.tx->txType == PARTIAL_FEE_DELEGATED_CANCEL) &&                                   \
-            parsing_ctx.currentField == CANCEL_RLP_DONE) ||                                              \
-        ((parsing_ctx.tx->txType == VALUE_TRANSFER ||                                                    \
-          parsing_ctx.tx->txType == FEE_DELEGATED_VALUE_TRANSFER ||                                      \
-          parsing_ctx.tx->txType == PARTIAL_FEE_DELEGATED_VALUE_TRANSFER) &&                             \
-        parsing_ctx.currentField == VALUE_TRANSFER_RLP_DONE) ||                                          \
-        ((parsing_ctx.tx->txType == VALUE_TRANSFER_MEMO ||                                               \
-          parsing_ctx.tx->txType == FEE_DELEGATED_VALUE_TRANSFER_MEMO ||                                 \
-          parsing_ctx.tx->txType == PARTIAL_FEE_DELEGATED_VALUE_TRANSFER_MEMO) &&                        \
-        parsing_ctx.currentField == VALUE_TRANSFER_MEMO_RLP_DONE) ||                                     \
-        ((parsing_ctx.tx->txType == SMART_CONTRACT_DEPLOY ||                                             \
-          parsing_ctx.tx->txType == FEE_DELEGATED_SMART_CONTRACT_DEPLOY ||                               \
-          parsing_ctx.tx->txType == PARTIAL_FEE_DELEGATED_SMART_CONTRACT_DEPLOY) &&                      \
-        parsing_ctx.currentField == SMART_CONTRACT_DEPLOY_RLP_DONE) ||                                   \
-        ((parsing_ctx.tx->txType == SMART_CONTRACT_EXECUTION ||                                          \
-          parsing_ctx.tx->txType == FEE_DELEGATED_SMART_CONTRACT_EXECUTION ||                            \
-          parsing_ctx.tx->txType == PARTIAL_FEE_DELEGATED_SMART_CONTRACT_EXECUTION) &&                   \
-        parsing_ctx.currentField == SMART_CONTRACT_EXECUTION_RLP_DONE))
+#define PARSING_IS_DONE(parsing_ctx)                                                         \
+    ((parsing_ctx.tx->txType == LEGACY && parsing_ctx.currentField == LEGACY_RLP_DONE) ||    \
+     ((parsing_ctx.tx->txType == CANCEL || parsing_ctx.tx->txType == FEE_DELEGATED_CANCEL || \
+       parsing_ctx.tx->txType == PARTIAL_FEE_DELEGATED_CANCEL) &&                            \
+      parsing_ctx.currentField == CANCEL_RLP_DONE) ||                                        \
+     ((parsing_ctx.tx->txType == VALUE_TRANSFER ||                                           \
+       parsing_ctx.tx->txType == FEE_DELEGATED_VALUE_TRANSFER ||                             \
+       parsing_ctx.tx->txType == PARTIAL_FEE_DELEGATED_VALUE_TRANSFER) &&                    \
+      parsing_ctx.currentField == VALUE_TRANSFER_RLP_DONE) ||                                \
+     ((parsing_ctx.tx->txType == VALUE_TRANSFER_MEMO ||                                      \
+       parsing_ctx.tx->txType == FEE_DELEGATED_VALUE_TRANSFER_MEMO ||                        \
+       parsing_ctx.tx->txType == PARTIAL_FEE_DELEGATED_VALUE_TRANSFER_MEMO) &&               \
+      parsing_ctx.currentField == VALUE_TRANSFER_MEMO_RLP_DONE) ||                           \
+     ((parsing_ctx.tx->txType == SMART_CONTRACT_DEPLOY ||                                    \
+       parsing_ctx.tx->txType == FEE_DELEGATED_SMART_CONTRACT_DEPLOY ||                      \
+       parsing_ctx.tx->txType == PARTIAL_FEE_DELEGATED_SMART_CONTRACT_DEPLOY) &&             \
+      parsing_ctx.currentField == SMART_CONTRACT_DEPLOY_RLP_DONE) ||                         \
+     ((parsing_ctx.tx->txType == SMART_CONTRACT_EXECUTION ||                                 \
+       parsing_ctx.tx->txType == FEE_DELEGATED_SMART_CONTRACT_EXECUTION ||                   \
+       parsing_ctx.tx->txType == PARTIAL_FEE_DELEGATED_SMART_CONTRACT_EXECUTION) &&          \
+      parsing_ctx.currentField == SMART_CONTRACT_EXECUTION_RLP_DONE))
 
 /**
  * @brief Copy transaction data to the output buffer.

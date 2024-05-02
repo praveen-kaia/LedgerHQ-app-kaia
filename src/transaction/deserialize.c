@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *****************************************************************************/
-#include <string.h> // memmove
+#include <string.h>  // memmove
 #include "buffer.h"
 
 #include "deserialize.h"
@@ -27,7 +27,7 @@
 #include "assert.h"
 #include <stdio.h>  // printf
 #define LEDGER_ASSERT(x, y) assert(x)
-#define PRINTF printf
+#define PRINTF              printf
 #else
 #include "ledger_assert.h"
 #endif
@@ -170,7 +170,7 @@ parser_status_e parseRLP(parser_context_t *parser_ctx) {
         parser_ctx->currentFieldPos = 0;
         parser_ctx->processingField = true;
     }
-   return PARSING_CONTINUE;
+    return PARSING_CONTINUE;
 }
 
 static void parseNestedRlp(parser_context_t *parser_ctx) {
@@ -194,8 +194,8 @@ parser_status_e transaction_deserialize(buffer_t *buf, transaction_t *tx) {
         .outerRLP = true,
         .tx = tx,
     };
-    for(;;){
-        if(PARSING_IS_DONE(parser_ctx)){
+    for (;;) {
+        if (PARSING_IS_DONE(parser_ctx)) {
             return PARSING_OK;
         }
         // Old style transaction (pre EIP-155). Transactions could just skip `v,r,s` so we
@@ -217,8 +217,9 @@ parser_status_e transaction_deserialize(buffer_t *buf, transaction_t *tx) {
         if (parser_ctx.outerRLP && !parser_ctx.processingOuterRLPField) {
             parseNestedRlp(&parser_ctx);
             // Hack to detect the tx type
-            // If the last field parsed was a fieldSingleByte it means the transaction is a Legacy transaction
-            if(parser_ctx.fieldSingleByte){
+            // If the last field parsed was a fieldSingleByte it means the transaction is a Legacy
+            // transaction
+            if (parser_ctx.fieldSingleByte) {
                 parser_ctx.tx->txType = LEGACY;
             } else {
                 // Save commandLength before calling parseRLP
@@ -233,7 +234,6 @@ parser_status_e transaction_deserialize(buffer_t *buf, transaction_t *tx) {
             }
             PRINTF("Transaction type: %d\n", parser_ctx.tx->txType);
 
-
             continue;
         }
         if (!parser_ctx.processingField) {
@@ -244,59 +244,58 @@ parser_status_e transaction_deserialize(buffer_t *buf, transaction_t *tx) {
         }
 
         PRINTF("Current field: %d\n", parser_ctx.currentField);
-            switch (parser_ctx.tx->txType) {
-                bool fault;
-                case LEGACY:
-                    fault = processTxLegacy(&parser_ctx);
-                    if (fault) {
-                        return PARSING_ERROR;
-                    }
-                    break;
-                case VALUE_TRANSFER:
-                case FEE_DELEGATED_VALUE_TRANSFER:
-                case PARTIAL_FEE_DELEGATED_VALUE_TRANSFER:
-                    fault = processTxValueTransfer(&parser_ctx);
-                    if (fault) {
-                        return PARSING_ERROR;
-                    }
-                    break;
-                case VALUE_TRANSFER_MEMO:
-                case FEE_DELEGATED_VALUE_TRANSFER_MEMO:
-                case PARTIAL_FEE_DELEGATED_VALUE_TRANSFER_MEMO:
-                    fault = processTxValueTransferMemo(&parser_ctx);
-                    if (fault) {
-                        return PARSING_ERROR;
-                    }
-                    break;
-                case SMART_CONTRACT_DEPLOY:
-                case FEE_DELEGATED_SMART_CONTRACT_DEPLOY:
-                case PARTIAL_FEE_DELEGATED_SMART_CONTRACT_DEPLOY:
-                    fault = processTxSmartContractDeploy(&parser_ctx);
-                    if (fault) {
-                        return PARSING_ERROR;
-                    }
-                    break;
-                case SMART_CONTRACT_EXECUTION:
-                case FEE_DELEGATED_SMART_CONTRACT_EXECUTION:
-                case PARTIAL_FEE_DELEGATED_SMART_CONTRACT_EXECUTION:
-                    fault = processTxSmartContractExecution(&parser_ctx);
-                    if (fault) {
-                        return PARSING_ERROR;
-                    }
-                    break;
-                case CANCEL:
-                case FEE_DELEGATED_CANCEL:
-                case PARTIAL_FEE_DELEGATED_CANCEL:
-                    fault = processTxCancel(&parser_ctx);
-                    if (fault) {
-                        return PARSING_ERROR;
-                    }
-                    break;
-                default:
-                    PRINTF("Transaction type %d is not supported\n", parser_ctx.tx->txType);
+        switch (parser_ctx.tx->txType) {
+            bool fault;
+            case LEGACY:
+                fault = processTxLegacy(&parser_ctx);
+                if (fault) {
                     return PARSING_ERROR;
-            }
-
+                }
+                break;
+            case VALUE_TRANSFER:
+            case FEE_DELEGATED_VALUE_TRANSFER:
+            case PARTIAL_FEE_DELEGATED_VALUE_TRANSFER:
+                fault = processTxValueTransfer(&parser_ctx);
+                if (fault) {
+                    return PARSING_ERROR;
+                }
+                break;
+            case VALUE_TRANSFER_MEMO:
+            case FEE_DELEGATED_VALUE_TRANSFER_MEMO:
+            case PARTIAL_FEE_DELEGATED_VALUE_TRANSFER_MEMO:
+                fault = processTxValueTransferMemo(&parser_ctx);
+                if (fault) {
+                    return PARSING_ERROR;
+                }
+                break;
+            case SMART_CONTRACT_DEPLOY:
+            case FEE_DELEGATED_SMART_CONTRACT_DEPLOY:
+            case PARTIAL_FEE_DELEGATED_SMART_CONTRACT_DEPLOY:
+                fault = processTxSmartContractDeploy(&parser_ctx);
+                if (fault) {
+                    return PARSING_ERROR;
+                }
+                break;
+            case SMART_CONTRACT_EXECUTION:
+            case FEE_DELEGATED_SMART_CONTRACT_EXECUTION:
+            case PARTIAL_FEE_DELEGATED_SMART_CONTRACT_EXECUTION:
+                fault = processTxSmartContractExecution(&parser_ctx);
+                if (fault) {
+                    return PARSING_ERROR;
+                }
+                break;
+            case CANCEL:
+            case FEE_DELEGATED_CANCEL:
+            case PARTIAL_FEE_DELEGATED_CANCEL:
+                fault = processTxCancel(&parser_ctx);
+                if (fault) {
+                    return PARSING_ERROR;
+                }
+                break;
+            default:
+                PRINTF("Transaction type %d is not supported\n", parser_ctx.tx->txType);
+                return PARSING_ERROR;
+        }
     }
 }
 
@@ -304,7 +303,7 @@ uint8_t readTxByte(parser_context_t *parser_ctx) {
     uint8_t data;
     if (parser_ctx->commandLength < 1) {
         PRINTF("readTxByte Underflow\n");
-        return 0; // This should throw something instead
+        return 0;  // This should throw something instead
     }
     data = *parser_ctx->workBuffer;
     parser_ctx->workBuffer++;

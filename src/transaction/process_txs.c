@@ -24,7 +24,7 @@
 #include "assert.h"
 #include <stdio.h>  // printf
 #define LEDGER_ASSERT(x, y) assert(x)
-#define PRINTF printf
+#define PRINTF              printf
 #else
 #include "ledger_assert.h"
 #endif
@@ -62,13 +62,12 @@ bool processTxLegacy(parser_context_t *parser_ctx) {
             return true;
     }
     return error;
-
 }
 
 bool processTxValueTransfer(parser_context_t *parser_ctx) {
     bool error = false;
     switch (parser_ctx->currentField) {
-         case VALUE_TRANSFER_RLP_CONTENT:
+        case VALUE_TRANSFER_RLP_CONTENT:
             processContent(parser_ctx);
             break;
         case VALUE_TRANSFER_RLP_TYPE:

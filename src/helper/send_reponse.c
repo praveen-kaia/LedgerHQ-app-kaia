@@ -18,7 +18,7 @@
 #include <stddef.h>  // size_t
 #include <stdint.h>  // uint*_t
 #include <string.h>  // memmove
-#include <stdio.h>  // PRINTF
+#include <stdio.h>   // PRINTF
 
 #include "buffer.h"
 #include "cx.h"
@@ -30,7 +30,6 @@
 #include "../sw.h"
 
 #include "../transaction/utils.h"
-
 
 static const char HEXDIGITS[] = "0123456789abcdef";
 
@@ -80,19 +79,13 @@ void getEthAddressStringFromBinary(uint8_t *address, char *out, cx_sha3_t *sha3C
     out[40] = '\0';
 }
 
-void getEthAddressStringFromKey(uint8_t *publicKey,
-                                char *out,
-                                cx_sha3_t *sha3Context) {
+void getEthAddressStringFromKey(uint8_t *publicKey, char *out, cx_sha3_t *sha3Context) {
     uint8_t hashAddress[HASH_LENGTH];
 
     CX_THROW(cx_keccak_init_no_throw(sha3Context, 256));
 
-    CX_THROW(cx_hash_no_throw((cx_hash_t *) sha3Context,
-                              CX_LAST,
-                              publicKey + 1,
-                              64,
-                              hashAddress,
-                              32));
+    CX_THROW(
+        cx_hash_no_throw((cx_hash_t *) sha3Context, CX_LAST, publicKey + 1, 64, hashAddress, 32));
 
     getEthAddressStringFromBinary(hashAddress + 12, out, sha3Context);
 }
@@ -107,7 +100,7 @@ int helper_send_response_pubkey() {
 
     resp[offset++] = ADDRESS_IN_ASCII_HEX_LEN;
     cx_sha3_t sha3;
-    getEthAddressStringFromKey(G_context.pk_info.raw_public_key, (char *) resp + offset, &sha3);    
+    getEthAddressStringFromKey(G_context.pk_info.raw_public_key, (char *) resp + offset, &sha3);
     offset += ADDRESS_IN_ASCII_HEX_LEN;
 
     resp[offset++] = CHAINCODE_LEN;
@@ -116,7 +109,6 @@ int helper_send_response_pubkey() {
 
     return io_send_response_pointer(resp, offset, SW_OK);
 }
-
 
 void format_signature_out(const uint8_t *signature, uint8_t *out) {
     uint8_t offset = 1;
@@ -143,9 +135,10 @@ int helper_send_response_sig() {
     uint8_t resp[1 + MAX_DER_SIG_LEN + 1] = {0};
     size_t offset = 0;
 
-    uint32_t v_out = u32_from_BE(G_context.tx_info.transaction.chainID.value, MIN(4, G_context.tx_info.transaction.chainID.length));
+    uint32_t v_out = u32_from_BE(G_context.tx_info.transaction.chainID.value,
+                                 MIN(4, G_context.tx_info.transaction.chainID.length));
     resp[offset++] = (v_out * 2) + 35 + G_context.tx_info.v;
-    
+
     format_signature_out(G_context.tx_info.signature, resp);
     PRINTF("Signature out: %.*H\n", 64, resp + 1);
 

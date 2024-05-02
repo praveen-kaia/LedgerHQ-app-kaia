@@ -20,7 +20,7 @@
 #include "assert.h"
 #include <stdio.h>  // printf
 #define LEDGER_ASSERT(x, y) assert(x)
-#define PRINTF printf
+#define PRINTF              printf
 #else
 #include "ledger_assert.h"
 #endif
@@ -43,8 +43,8 @@ bool processAccessList(parser_context_t *parser_ctx) {
         return true;
     }
     if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
-        uint32_t copySize =
-            MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
+        uint32_t copySize = MIN(parser_ctx->commandLength,
+                                parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
         copyTxData(parser_ctx, NULL, copySize);
     }
     if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
@@ -64,8 +64,8 @@ bool processType(parser_context_t *parser_ctx) {
         return true;
     }
     if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
-        uint32_t copySize =
-            MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
+        uint32_t copySize = MIN(parser_ctx->commandLength,
+                                parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
         copyTxData(parser_ctx, (uint8_t *) &parser_ctx->tx->txType, copySize);
     }
     if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
@@ -85,8 +85,8 @@ bool processChainID(parser_context_t *parser_ctx) {
         return true;
     }
     if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
-        uint32_t copySize =
-            MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
+        uint32_t copySize = MIN(parser_ctx->commandLength,
+                                parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
         copyTxData(parser_ctx, parser_ctx->tx->chainID.value, copySize);
     }
     if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
@@ -108,8 +108,8 @@ bool processNonce(parser_context_t *parser_ctx) {
         return true;
     }
     if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
-        uint32_t copySize =
-            MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
+        uint32_t copySize = MIN(parser_ctx->commandLength,
+                                parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
         copyTxData(parser_ctx, parser_ctx->tx->nonce.value, copySize);
     }
     if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
@@ -130,9 +130,11 @@ bool processStartGas(parser_context_t *parser_ctx) {
         return true;
     }
     if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
-        uint32_t copySize =
-            MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
-        copyTxData(parser_ctx, parser_ctx->tx->startgas.value + parser_ctx->currentFieldPos, copySize);
+        uint32_t copySize = MIN(parser_ctx->commandLength,
+                                parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
+        copyTxData(parser_ctx,
+                   parser_ctx->tx->startgas.value + parser_ctx->currentFieldPos,
+                   copySize);
     }
     if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
         parser_ctx->tx->startgas.length = parser_ctx->currentFieldLength;
@@ -157,9 +159,11 @@ bool processGasprice(parser_context_t *parser_ctx) {
         return true;
     }
     if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
-        uint32_t copySize =
-            MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
-        copyTxData(parser_ctx, parser_ctx->tx->gasprice.value + parser_ctx->currentFieldPos, copySize);
+        uint32_t copySize = MIN(parser_ctx->commandLength,
+                                parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
+        copyTxData(parser_ctx,
+                   parser_ctx->tx->gasprice.value + parser_ctx->currentFieldPos,
+                   copySize);
     }
     if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
         parser_ctx->tx->gasprice.length = parser_ctx->currentFieldLength;
@@ -179,8 +183,8 @@ bool processValue(parser_context_t *parser_ctx) {
         return true;
     }
     if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
-        uint32_t copySize =
-            MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
+        uint32_t copySize = MIN(parser_ctx->commandLength,
+                                parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
         copyTxData(parser_ctx, parser_ctx->tx->value.value + parser_ctx->currentFieldPos, copySize);
     }
     if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
@@ -201,8 +205,8 @@ bool processTo(parser_context_t *parser_ctx) {
         return true;
     }
     if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
-        uint32_t copySize =
-            MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
+        uint32_t copySize = MIN(parser_ctx->commandLength,
+                                parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
         copyTxData(parser_ctx, parser_ctx->tx->to + parser_ctx->currentFieldPos, copySize);
     }
     if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
@@ -219,8 +223,8 @@ bool processData(parser_context_t *parser_ctx) {
         return true;
     }
     if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
-        uint32_t copySize =
-            MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
+        uint32_t copySize = MIN(parser_ctx->commandLength,
+                                parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
         // If there is no data, set dataPresent to false.
         if (copySize == 1 && *parser_ctx->workBuffer == 0x00) {
             parser_ctx->tx->dataPresent = false;
@@ -241,8 +245,8 @@ bool processAndDiscard(parser_context_t *parser_ctx) {
         return true;
     }
     if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
-        uint32_t copySize =
-            MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
+        uint32_t copySize = MIN(parser_ctx->commandLength,
+                                parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
         copyTxData(parser_ctx, NULL, copySize);
     }
     if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
@@ -262,8 +266,8 @@ bool processRatio(parser_context_t *parser_ctx) {
         return true;
     }
     if (parser_ctx->currentFieldPos < parser_ctx->currentFieldLength) {
-        uint32_t copySize =
-            MIN(parser_ctx->commandLength, parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
+        uint32_t copySize = MIN(parser_ctx->commandLength,
+                                parser_ctx->currentFieldLength - parser_ctx->currentFieldPos);
         copyTxData(parser_ctx, &parser_ctx->tx->ratio + parser_ctx->currentFieldPos, copySize);
     }
     if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {

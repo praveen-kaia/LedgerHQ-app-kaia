@@ -128,7 +128,6 @@ UX_STEP_NOCB(ux_display_review_step,
                  "Transaction",
              });
 
-
 // Step with title/text for transaction type
 UX_STEP_NOCB(ux_display_type_step,
              bnnn_paging,
@@ -143,7 +142,6 @@ UX_STEP_NOCB(ux_display_nonce_step,
                  .title = "Nonce",
                  .text = g_nonce,
              });
-
 
 // Step with title/text for gas price
 UX_STEP_NOCB(ux_display_gas_price_step,
@@ -189,7 +187,7 @@ UX_STEP_NOCB(ux_display_amount_step,
                  .text = g_amount,
              });
 
- UX_FLOW(ux_display_legacy_transaction_flow,
+UX_FLOW(ux_display_legacy_transaction_flow,
         &ux_display_review_step,
         &ux_display_type_step,
         &ux_display_amount_step,
@@ -204,7 +202,7 @@ static void handle_display_legacy() {
     ux_flow_init(0, ux_display_legacy_transaction_flow, NULL);
 }
 
-static void handle_display_value_transfer(){
+static void handle_display_value_transfer() {
     ux_flow_step_t static const *ux_display_flow[MAX_FLOW_STEPS];
     int current_step = 0;
 
@@ -272,7 +270,6 @@ static void handle_display_smart_contract_execution_display() {
     ux_flow_init(0, ux_display_flow, NULL);
 }
 
-
 static void handle_display_cancel() {
     ux_flow_step_t static const *ux_display_flow[MAX_FLOW_STEPS];
     int current_step = 0;
@@ -316,7 +313,7 @@ int ui_display_transaction() {
 
     char nonce[30] = {0};
     uint64_t nonceValue = convertUint256ToUint64(&G_context.tx_info.transaction.nonce);
-    if(!format_u64(nonce, sizeof(nonce), nonceValue)) {
+    if (!format_u64(nonce, sizeof(nonce), nonceValue)) {
         return io_send_sw(SW_DISPLAY_NONCE_FAIL);
     }
     strncpy(g_nonce, nonce, sizeof(g_nonce));
@@ -344,7 +341,7 @@ int ui_display_transaction() {
         return io_send_sw(SW_DISPLAY_FEERATIO_FAIL);
     }
     strncpy(g_feeRatio, feeRatio, sizeof(g_feeRatio));
-    strncat(g_feeRatio, "%%", 1); // append '%' sign
+    strncat(g_feeRatio, "%%", 1);  // append '%' sign
 
     char amount[50] = {0};
     if (!ammount_to_string(G_context.tx_info.transaction.value,
@@ -357,7 +354,7 @@ int ui_display_transaction() {
 
     g_validate_callback = &ui_action_validate_transaction;
 
-    switch(G_context.tx_info.transaction.txType) {
+    switch (G_context.tx_info.transaction.txType) {
         case LEGACY:
             handle_display_legacy();
             break;
