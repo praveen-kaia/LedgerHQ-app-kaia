@@ -8,6 +8,8 @@
 #include <cmocka.h>
 
 #include "transaction/deserialize.h"
+#include "transaction/process_txs.h"
+#include "transaction/process_rlp_fields.h"
 #include "types.h"
 
 static void test_tx_deserialization(void **state) {
