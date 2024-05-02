@@ -14,26 +14,25 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *****************************************************************************/
-#include <stdio.h>  // printf
 #include <string.h> // memmove
 #include "buffer.h"
 
 #include "deserialize.h"
 #include "utils.h"
 #include "types.h"
-#include "globals.h"
 #include "process_txs.h"
 #include "process_rlp_fields.h"
 
 #if defined(TEST) || defined(FUZZ)
 #include "assert.h"
+#include <stdio.h>  // printf
 #define LEDGER_ASSERT(x, y) assert(x)
+#define PRINTF printf
 #else
 #include "ledger_assert.h"
 #endif
 
 #ifndef PRINTF
-#define PRINTF printf
 #endif
 // RLP related
 
