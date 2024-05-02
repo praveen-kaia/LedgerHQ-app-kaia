@@ -85,7 +85,6 @@ bool processChainID(parser_context_t *parser_ctx) {
     if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
         parser_ctx->tx->chainID.length = parser_ctx->currentFieldLength;
 
-        // chainID = parser_ctx->tx->chainID;
         parser_ctx->currentField++;
         parser_ctx->processingField = false;
     }
@@ -200,7 +199,6 @@ bool processTo(parser_context_t *parser_ctx) {
         copyTxData(parser_ctx, parser_ctx->tx->to + parser_ctx->currentFieldPos, copySize);
     }
     if (parser_ctx->currentFieldPos == parser_ctx->currentFieldLength) {
-        // parser_ctx->tx->destinationLength = parser_ctx->currentFieldLength;
         parser_ctx->currentField++;
         parser_ctx->processingField = false;
     }
