@@ -12,7 +12,8 @@ size_t strlcpy(char *dst, const char *src, size_t size) {
 
     if (left == 0) {
         if (size != 0) *dst = '\0';  // Null terminate if sizee is not zero
-        while (*s++);
+        while (*s++)
+            ;
     }
 
     return (s - src - 1);
