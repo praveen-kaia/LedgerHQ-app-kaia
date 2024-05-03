@@ -23,8 +23,12 @@
 /**
  * Maximum transaction length (bytes).
  */
-#define MAX_TRANSACTION_LEN 510
+#define MAX_TRANSACTION_LEN 8190
 
+/**
+ * Maximum APDU size (bytes).
+ */
+#define MAX_APDU_SIZE 255
 /**
  * Maximum signature length (bytes).
  */

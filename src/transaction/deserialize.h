@@ -142,7 +142,7 @@ typedef struct {
     bool outerRLP;                 /// flag to indicate if the outer RLP is being processed
     bool processingOuterRLPField;  /// flag to indicate if a field in the outer RLP is being
                                    /// processed
-    uint8_t commandLength;         /// length of the command
+    uint32_t commandLength;        /// length of the command
     uint32_t dataLength;           /// length of the data
     uint8_t rlpBuffer[5];          /// buffer to store RLP data
     uint32_t rlpBufferPos;         /// position in the RLP buffer
