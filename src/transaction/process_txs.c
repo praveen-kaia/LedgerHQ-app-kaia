@@ -250,7 +250,7 @@ bool processTxSmartContractExecution(parser_context_t *parser_ctx) {
         case SMART_CONTRACT_EXECUTION_RLP_DATA:
             processData(parser_ctx);
             // Skip ratio if not partial fee delegated txType
-            if (parser_ctx->tx->txType != PARTIAL_FEE_DELEGATED_CANCEL) {
+            if (parser_ctx->tx->txType != PARTIAL_FEE_DELEGATED_SMART_CONTRACT_EXECUTION) {
                 parser_ctx->currentField++;
             }
             break;
