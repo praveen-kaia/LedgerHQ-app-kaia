@@ -54,12 +54,14 @@ int handler_sign_tx(buffer_t *cdata, uint8_t chunk, bool more) {
         if (G_context.tx_info.raw_tx_len + cdata->size > sizeof(G_context.tx_info.raw_tx)) {
             return io_send_sw(SW_WRONG_TX_LENGTH);
         }
+        PRINTF("TX CHUNK: %.*H\n", cdata->size, cdata->ptr);
         if (!buffer_move(cdata,
                          G_context.tx_info.raw_tx + G_context.tx_info.raw_tx_len,
                          cdata->size)) {
             return io_send_sw(SW_TX_PARSING_FAIL);
         }
         G_context.tx_info.raw_tx_len += cdata->size;
+        PRINTF("Raw TX Len: %d\n", G_context.tx_info.raw_tx_len);
 
         if (more) {
             // more APDUs with transaction part are expected.
@@ -72,6 +74,11 @@ int handler_sign_tx(buffer_t *cdata, uint8_t chunk, bool more) {
             buffer_t buf = {.ptr = G_context.tx_info.raw_tx,
                             .size = G_context.tx_info.raw_tx_len,
                             .offset = 0};
+            
+            // print buffer
+            PRINTF("Raw TX: %.*H\n", buf.size, buf.ptr);
+            //print buffer size
+            PRINTF("Raw TX size: %d\n", buf.size);
 
             parser_status_e status = transaction_deserialize(&buf, &G_context.tx_info.transaction);
             PRINTF("Parsing status: %d.\n", status);
