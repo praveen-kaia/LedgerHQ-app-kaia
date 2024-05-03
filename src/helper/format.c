@@ -15,11 +15,11 @@
  *  limitations under the License.
  *****************************************************************************/
 
-#include <stdbool.h> // bool
-#include <stddef.h> // size_t
-#include <stdint.h> // uint*_t
-#include <string.h> // memcpy
-#include <stdio.h> // snprintf
+#include <stdbool.h>  // bool
+#include <stddef.h>   // size_t
+#include <stdint.h>   // uint*_t
+#include <string.h>   // memcpy
+#include <stdio.h>    // snprintf
 
 #ifndef strlcpy
 #include "strlcpy.h"
@@ -28,86 +28,85 @@
 #include "format.h"
 #include "../transaction/types.h"
 
-
 bool format_transaction_type(transaction_type_e txType, char *out, size_t out_len) {
     switch (txType) {
         case VALUE_TRANSFER:
-            if(snprintf(out, out_len, "VALUE_TRANSFER")){
+            if (snprintf(out, out_len, "Value Transfer")) {
                 return false;
             };
             break;
         case FEE_DELEGATED_VALUE_TRANSFER:
-            if(snprintf(out, out_len, "FEE_DELEGATED_VALUE_TRANSFER")){
+            if (snprintf(out, out_len, "Fee Delegated Value Transfer")) {
                 return false;
             };
             break;
         case PARTIAL_FEE_DELEGATED_VALUE_TRANSFER:
-            if(snprintf(out, out_len, "PARTIAL_FEE_DELEGATED_VALUE_TRANSFER")){
+            if (snprintf(out, out_len, "Partial Fee Delegated Value Transfer")) {
                 return false;
             };
             break;
         case VALUE_TRANSFER_MEMO:
-            if(snprintf(out, out_len, "VALUE_TRANSFER_MEMO")){
+            if (snprintf(out, out_len, "Value Transfer Memo")) {
                 return false;
             };
             break;
         case FEE_DELEGATED_VALUE_TRANSFER_MEMO:
-            if(snprintf(out, out_len, "FEE_DELEGATED_VALUE_TRANSFER_MEMO")){
+            if (snprintf(out, out_len, "Fee Delegated Value Transfer Memo")) {
                 return false;
             };
             break;
         case PARTIAL_FEE_DELEGATED_VALUE_TRANSFER_MEMO:
-            if(snprintf(out, out_len, "PARTIAL_FEE_DELEGATED_VALUE_TRANSFER_MEMO")){
+            if (snprintf(out, out_len, "Partial Fee Delegated Value Transfer Memo")) {
                 return false;
             };
             break;
         case SMART_CONTRACT_DEPLOY:
-            if(snprintf(out, out_len, "SMART_CONTRACT_DEPLOY")){
+            if (snprintf(out, out_len, "Smart Contract Deploy")) {
                 return false;
             };
             break;
         case FEE_DELEGATED_SMART_CONTRACT_DEPLOY:
-            if(snprintf(out, out_len, "FEE_DELEGATED_SMART_CONTRACT_DEPLOY")){
+            if (snprintf(out, out_len, "Fee Delegated Smart Contract Deploy")) {
                 return false;
             };
             break;
         case PARTIAL_FEE_DELEGATED_SMART_CONTRACT_DEPLOY:
-            if(snprintf(out, out_len, "PARTIAL_FEE_DELEGATED_SMART_CONTRACT_DEPLOY")){
+            if (snprintf(out, out_len, "Partial Fee Delegated Smart Contract Deploy")) {
                 return false;
             };
             break;
         case SMART_CONTRACT_EXECUTION:
-            if(snprintf(out, out_len, "SMART_CONTRACT_EXECUTION")){
+            if (snprintf(out, out_len, "Smart Contract Execution")) {
                 return false;
             };
             break;
         case FEE_DELEGATED_SMART_CONTRACT_EXECUTION:
-            if(snprintf(out, out_len, "FEE_DELEGATED_SMART_CONTRACT_EXECUTION")){
+            if (snprintf(out, out_len, "Fee Delegated Smart Contract Execution")) {
                 return false;
             };
             break;
         case PARTIAL_FEE_DELEGATED_SMART_CONTRACT_EXECUTION:
-            if(snprintf(out, out_len, "PARTIAL_FEE_DELEGATED_SMART_CONTRACT_EXECUTION")){
+            if (snprintf(out, out_len, "Partial Fee Delegated Smart Contract Execution")) {
                 return false;
             };
             break;
         case CANCEL:
-            if(snprintf(out, out_len, "CANCEL")){
+            if (snprintf(out, out_len, "Cancel")) {
                 return false;
             };
             break;
         case FEE_DELEGATED_CANCEL:
-            if(snprintf(out, out_len, "FEE_DELEGATED_CANCEL")){
+            if (snprintf(out, out_len, "Fee Delegated Cancel")) {
                 return false;
             };
             break;
         case PARTIAL_FEE_DELEGATED_CANCEL:
-            if(snprintf(out, out_len, "PARTIAL_FEE_DELEGATED_CANCEL")){
+            if (snprintf(out, out_len, "Partial Fee Delegated Cancel")) {
                 return false;
             };
             break;
         case LEGACY:
-            if(snprintf(out, out_len, "LEGACY")){
+            if (snprintf(out, out_len, "Legacy")) {
                 return false;
             };
             break;
@@ -118,9 +117,9 @@ bool format_transaction_type(transaction_type_e txType, char *out, size_t out_le
 }
 
 bool ammount_to_string(const uint256_t amount,
-                                  uint8_t decimals,
-                                  char *out_buffer,
-                                  size_t out_buffer_size) {
+                       uint8_t decimals,
+                       char *out_buffer,
+                       size_t out_buffer_size) {
     char tmp_buffer[100] = {0};
 
     if (uint256_to_decimal(amount, tmp_buffer, sizeof(tmp_buffer)) == false) {
@@ -128,13 +127,9 @@ bool ammount_to_string(const uint256_t amount,
     }
 
     uint8_t amount_len = strnlen(tmp_buffer, sizeof(tmp_buffer));
-    uint32_t copySize = out_buffer_size;
 
-    if (adjustDecimals(tmp_buffer,
-                       amount_len,
-                       out_buffer ,
-                       out_buffer_size  - 1,
-                       decimals) == false) {
+    if (adjustDecimals(tmp_buffer, amount_len, out_buffer, out_buffer_size - 1, decimals) ==
+        false) {
         return false;
     }
 
@@ -143,10 +138,10 @@ bool ammount_to_string(const uint256_t amount,
 };
 
 bool adjustDecimals(const char *src,
-                                  size_t srcLength,
-                                  char *target,
-                                  size_t targetLength,
-                                  uint8_t decimals) {
+                    size_t srcLength,
+                    char *target,
+                    size_t targetLength,
+                    uint8_t decimals) {
     uint32_t startOffset;
     uint32_t lastZeroOffset = 0;
     uint32_t offset = 0;
@@ -252,7 +247,7 @@ bool uint256_to_decimal(const uint256_t value, char *out, size_t out_len) {
     return true;
 }
 
-uint64_t convertUint256ToUint64(const uint256_t* bytes) {
+uint64_t convertUint256ToUint64(const uint256_t *bytes) {
     uint64_t result = 0;
     for (int i = 0; i < bytes->length && i < 8; i++) {
         result <<= 8;  // Shift existing value left by 8 bits

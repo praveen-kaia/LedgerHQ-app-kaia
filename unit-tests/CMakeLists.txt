@@ -50,10 +50,14 @@ add_library(format SHARED $ENV{BOLOS_SDK}/lib_standard_app/format.c)
 add_library(varint SHARED $ENV{BOLOS_SDK}/lib_standard_app/varint.c)
 add_library(apdu_parser SHARED $ENV{BOLOS_SDK}/lib_standard_app/parser.c)
 add_library(transaction_deserialize ../src/transaction/deserialize.c)
+add_library(process_txs ../src/transaction/process_txs.c)
+add_library(process_rlp_fields ../src/transaction/process_rlp_fields.c)
 add_library(transaction_utils ../src/transaction/utils.c)
 
 target_link_libraries(test_tx_parser PUBLIC
                       transaction_deserialize
+                      process_txs
+                      process_rlp_fields
                       buffer
                       bip32
                       cmocka

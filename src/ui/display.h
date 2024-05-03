@@ -2,6 +2,9 @@
 
 #include <stdbool.h>  // bool
 
+#define DISPLAY_OK    0
+#define DISPLAY_ERROR -1
+
 /**
  * Callback to reuse action with approve/reject in step FLOW.
  */

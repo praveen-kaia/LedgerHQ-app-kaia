@@ -56,7 +56,7 @@ static int crypto_sign_message(void) {
     G_context.tx_info.signature_len = sig_len;
 
     if (info & CX_ECCINFO_PARITY_ODD) {
-         G_context.tx_info.v = CX_ECCINFO_PARITY_ODD;
+        G_context.tx_info.v = CX_ECCINFO_PARITY_ODD;
     }
     if (info & CX_ECCINFO_xGTn) {
         G_context.tx_info.v = CX_ECCINFO_xGTn;

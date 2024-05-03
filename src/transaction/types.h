@@ -5,7 +5,7 @@
 
 #define MAX_TX_LEN   510
 #define ADDRESS_LEN  20
-#define MAX_INT256  32
+#define MAX_INT256   32
 #define MAX_MEMO_LEN 465  // 510 - ADDRESS_LEN - 2*SIZE(U64) - SIZE(MAX_VARINT)
 
 typedef enum {
@@ -31,6 +31,8 @@ typedef enum {
     EIP2930 = 0x01,
     EIP1559 = 0x02,
 
+    LEGACY = 0xc0,
+
     VALUE_TRANSFER = 0x08,
     FEE_DELEGATED_VALUE_TRANSFER = 0x09,
     PARTIAL_FEE_DELEGATED_VALUE_TRANSFER = 0x0A,
@@ -51,18 +53,16 @@ typedef enum {
     FEE_DELEGATED_CANCEL = 0x39,
     PARTIAL_FEE_DELEGATED_CANCEL = 0x3A,
 
-    LEGACY = 0xc0,
 } transaction_type_e;
 
 typedef struct {
-    transaction_type_e txType;      /// transaction type
-    uint8_t nonce;                 /// nonce (8 bytes)
+    transaction_type_e txType;  /// transaction type
+    uint256_t nonce;            /// nonce
     uint256_t gasprice;
-    uint256_t startgas;             /// also known as `gaslimit`
-    uint8_t to[ADDRESS_LEN];                    /// pointer to address (20 bytes)
-    uint8_t ratio;                  /// ratio for partial fee delegated tx
-    uint256_t value;                /// amount value
+    uint256_t startgas;       /// also known as `gaslimit`
+    uint8_t to[ADDRESS_LEN];  /// pointer to address (20 bytes)
+    uint8_t ratio;            /// ratio for partial fee delegated tx
+    uint256_t value;          /// amount value
     uint256_t chainID;
-    bool dataPresent;               /// flag for data presence
+    bool dataPresent;  /// flag for data presence
 } transaction_t;
-
