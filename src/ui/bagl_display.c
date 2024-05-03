@@ -225,7 +225,7 @@ static void handle_display_value_transfer() {
     ux_flow_init(0, ux_display_flow, NULL);
 }
 
-static void handle_display_smart_contract_deploy_display() {
+static void handle_display_smart_contract_deploy() {
     ux_flow_step_t static const *ux_display_flow[MAX_FLOW_STEPS];
     int current_step = 0;
 
@@ -247,7 +247,7 @@ static void handle_display_smart_contract_deploy_display() {
     ux_flow_init(0, ux_display_flow, NULL);
 }
 
-static void handle_display_smart_contract_execution_display() {
+static void handle_display_smart_contract_execution() {
     ux_flow_step_t static const *ux_display_flow[MAX_FLOW_STEPS];
     int current_step = 0;
 
@@ -369,12 +369,12 @@ int ui_display_transaction() {
         case SMART_CONTRACT_DEPLOY:
         case FEE_DELEGATED_SMART_CONTRACT_DEPLOY:
         case PARTIAL_FEE_DELEGATED_SMART_CONTRACT_DEPLOY:
-            handle_display_smart_contract_deploy_display();
+            handle_display_smart_contract_deploy();
             break;
         case SMART_CONTRACT_EXECUTION:
         case FEE_DELEGATED_SMART_CONTRACT_EXECUTION:
         case PARTIAL_FEE_DELEGATED_SMART_CONTRACT_EXECUTION:
-            handle_display_smart_contract_execution_display();
+            handle_display_smart_contract_execution();
             break;
         case CANCEL:
         case FEE_DELEGATED_CANCEL:
