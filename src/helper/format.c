@@ -116,7 +116,7 @@ bool format_transaction_type(transaction_type_e txType, char *out, size_t out_le
     return true;
 }
 
-bool ammount_to_string(const uint256_t amount,
+bool amount_to_string(const uint256_t amount,
                        uint8_t decimals,
                        char *out_buffer,
                        size_t out_buffer_size) {

@@ -45,7 +45,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
         format_u64(feeRatio, sizeof(feeRatio), tx.ratio);
         printf("feeRatio: %s\n", feeRatio);
 
-        ammount_to_string(tx.value, 18, amount, sizeof(amount)); // 18 is the num of decimals
+        amount_to_string(tx.value, 18, amount, sizeof(amount)); // 18 is the num of decimals
         printf("amount: %s\n", amount);
     }
 

@@ -344,7 +344,7 @@ int ui_display_transaction() {
     strncat(g_feeRatio, "%%", 1);  // append '%' sign
 
     char amount[50] = {0};
-    if (!ammount_to_string(G_context.tx_info.transaction.value,
+    if (!amount_to_string(G_context.tx_info.transaction.value,
                            EXPONENT_SMALLEST_UNIT,
                            amount,
                            sizeof(amount))) {
