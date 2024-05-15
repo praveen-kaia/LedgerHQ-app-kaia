@@ -41,10 +41,10 @@ uint64_t convertUint256ToUint64(const uint256_t *bytes);
  * @param out_buffer_size The size of the output buffer.
  * @return Returns true if the conversion is successful, false otherwise.
  */
-bool ammount_to_string(const uint256_t amount,
-                       uint8_t decimals,
-                       char *out_buffer,
-                       size_t out_buffer_size);
+bool amount_to_string(const uint256_t amount,
+                      uint8_t decimals,
+                      char *out_buffer,
+                      size_t out_buffer_size);
 
 /**
  * Adjusts the number of decimals in a string representation of a value.

@@ -344,10 +344,10 @@ int ui_display_transaction() {
     strncat(g_feeRatio, "%%", 1);  // append '%' sign
 
     char amount[50] = {0};
-    if (!ammount_to_string(G_context.tx_info.transaction.value,
-                           EXPONENT_SMALLEST_UNIT,
-                           amount,
-                           sizeof(amount))) {
+    if (!amount_to_string(G_context.tx_info.transaction.value,
+                          EXPONENT_SMALLEST_UNIT,
+                          amount,
+                          sizeof(amount))) {
         return io_send_sw(SW_DISPLAY_AMOUNT_FAIL);
     }
     snprintf(g_amount, sizeof(g_amount), "KLAY %.*s", sizeof(amount), amount);
