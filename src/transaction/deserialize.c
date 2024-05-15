@@ -23,7 +23,7 @@
 #include "process_txs.h"
 #include "process_rlp_fields.h"
 
-#if defined(TEST) || defined(FUZZ)
+#if defined(TEST)
 #include "assert.h"
 #include <stdio.h>  // printf
 #define LEDGER_ASSERT(x, y) assert(x)
@@ -223,7 +223,7 @@ parser_status_e transaction_deserialize(buffer_t *buf, transaction_t *tx) {
                 parser_ctx.tx->txType = LEGACY;
             } else {
                 // Save commandLength before calling parseRLP
-                uint8_t rlpStartCommandLength = parser_ctx.commandLength;
+                uint32_t rlpStartCommandLength = parser_ctx.commandLength;
                 // The byte after the nested rlp is the tx type,
                 parseRLP(&parser_ctx);
                 parser_ctx.tx->txType = parser_ctx.workBuffer[0];
