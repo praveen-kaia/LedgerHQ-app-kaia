@@ -337,8 +337,7 @@ int ui_display_transaction() {
     }
     strncpy(g_gasLimit, gasLimit, sizeof(g_gasLimit));
 
-    if (format_hex(G_context.tx_info.transaction.to, ADDRESS_LEN, g_to, sizeof(g_to)) ==
-        -1) {
+    if (format_hex(G_context.tx_info.transaction.to, ADDRESS_LEN, g_to, sizeof(g_to)) == -1) {
         return io_send_sw(SW_DISPLAY_ADDRESS_FAIL);
     }
 
@@ -351,9 +350,9 @@ int ui_display_transaction() {
 
     char amount[50] = {0};
     if (!amount_to_string(G_context.tx_info.transaction.value,
-                           EXPONENT_SMALLEST_UNIT,
-                           amount,
-                           sizeof(amount))) {
+                          EXPONENT_SMALLEST_UNIT,
+                          amount,
+                          sizeof(amount))) {
         return io_send_sw(SW_DISPLAY_AMOUNT_FAIL);
     }
     snprintf(g_amount, sizeof(g_amount), "KLAY %.*s", sizeof(amount), amount);
