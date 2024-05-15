@@ -77,7 +77,7 @@ int handler_sign_tx(buffer_t *cdata, uint8_t chunk, bool more) {
             
             // print buffer
             PRINTF("Raw TX: %.*H\n", buf.size, buf.ptr);
-            //print buffer size
+            // print buffer size
             PRINTF("Raw TX size: %d\n", buf.size);
 
             parser_status_e status = transaction_deserialize(&buf, &G_context.tx_info.transaction);
