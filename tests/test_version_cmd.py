@@ -3,7 +3,7 @@ from application_client.klaytn_response_unpacker import unpack_get_version_respo
 
 # Taken from the Makefile, to update every time the Makefile version is bumped
 MAJOR = 1
-MINOR = 0
+MINOR = 1
 PATCH = 0
 
 # In this test we check the behavior of the device when asked to provide the app version

@@ -31,10 +31,10 @@ The address can be optionally checked on the device before being returned.
 
 ##### `Command`
 
-| CLA | INS   | P1                                                 | P2    | Lc       | Le       |
-| --- | ---   | ---                                                | ---   | ---      | ---      |
-| E0  |  05   |  00 : return address                               | 00    | variable | variable |
-|     |       |  01 : display address and confirm before returning |       |          |          |
+| CLA | INS   | P1                                                 | P2    | Lc       |
+| --- | ---   | ---                                                | ---   | ---      |
+| E0  |  05   |  00 : return address                               | 00    | variable |
+|     |       |  01 : display address and confirm before returning |       |          |
 
 ##### `Input data`
 
@@ -69,10 +69,10 @@ The input data is the RLP encoded transaction streamed to the device in 255 byte
 
 ##### `Command`
 
-| CLA | INS  | P1                   | P2                               | Lc       | Le       |
-| --- | ---  | ---                  | ---                              | ---      | ---      |
-| E0  | 06   |  00-FF : chunk index | 00 : last transaction data block | variable | variable |
-|     |      |                      | 80 : subsequent transaction data block |    |          |
+| CLA | INS  | P1                   | P2                               | Lc       |
+| --- | ---  | ---                  | ---                              | ---      |
+| E0  | 06   |  00-FF : chunk index | 00 : last transaction data block | variable |
+|     |      |                      | 80 : subsequent transaction data block |    |
 
 ##### `Input data (first transaction data block)`
 
@@ -109,9 +109,9 @@ This command returns klaytn application version
 
 ##### `Command`
 
-| CLA | INS | P1  | P2  | Lc   | Le |
-| --- | --- | --- | --- | ---  | ---|
-| E0  | 03  | 00  | 00  | 00   | 04 |
+| CLA | INS | P1  | P2  | Lc   |
+| --- | --- | --- | --- | ---  |
+| E0  | 03  | 00  | 00  | 00   |
 
 ##### `Input data`
 
@@ -135,9 +135,9 @@ This command returns klaytn application name
 #### Coding
 
 ##### `Command`
-| CLA | INS | P1  | P2  | Lc   | Le |
-| --- | --- | --- | --- | ---  | ---|
-| E0  | 04  | 00  | 00  | 00   | 04 |
+| CLA | INS | P1  | P2  | Lc   |
+| --- | --- | --- | --- | ---  |
+| E0  | 04  | 00  | 00  | 00   |
 
 ##### `Input data`
 
