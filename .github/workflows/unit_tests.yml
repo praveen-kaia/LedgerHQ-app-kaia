@@ -26,11 +26,6 @@ jobs:
           repository: ledgerHQ/ledger-secure-sdk
           path: sdk
 
-      # - name: Set up Perl
-      #   run: |
-      #     apt-get update
-      #     apt-get install -y libjson-xs-perl
-
       - name: Build unit tests
         run: |
           cd unit-tests/
