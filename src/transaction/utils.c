@@ -19,7 +19,7 @@
 #include <stdbool.h>  // bool
 #include <string.h>   // memmove
 
-#if defined(TEST) || defined(FUZZ)
+#if defined(TEST)
 #include "assert.h"
 #define LEDGER_ASSERT(x, y) assert(x)
 #else

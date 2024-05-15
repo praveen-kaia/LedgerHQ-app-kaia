@@ -16,7 +16,7 @@
  *****************************************************************************/
 
 #include "process_rlp_fields.h"
-#if defined(TEST) || defined(FUZZ)
+#if defined(TEST)
 #include "assert.h"
 #include <stdio.h>  // printf
 #define LEDGER_ASSERT(x, y) assert(x)
