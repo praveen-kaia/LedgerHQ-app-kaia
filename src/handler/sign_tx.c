@@ -74,7 +74,7 @@ int handler_sign_tx(buffer_t *cdata, uint8_t chunk, bool more) {
             buffer_t buf = {.ptr = G_context.tx_info.raw_tx,
                             .size = G_context.tx_info.raw_tx_len,
                             .offset = 0};
-            
+
             // print buffer
             PRINTF("Raw TX: %.*H\n", buf.size, buf.ptr);
             // print buffer size
