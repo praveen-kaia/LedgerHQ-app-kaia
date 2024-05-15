@@ -27,6 +27,7 @@
 #include "io.h"
 #include "bip32.h"
 #include "format.h"
+#include "helper/format.h"
 
 #include "display.h"
 #include "constants.h"
@@ -38,11 +39,16 @@
 #include "../menu.h"
 
 // Buffer where the transaction amount string is written
-static char g_amount[30];
+static char g_amount[50];
 // Buffer where the transaction address string is written
-static char g_address[43];
+static char g_to[43];
+static char g_type[50];
+static char g_nonce[30];
+static char g_gasPrice[30];
+static char g_gasLimit[30];
+static char g_feeRatio[30];
 
-static nbgl_layoutTagValue_t pairs[2];
+static nbgl_layoutTagValue_t pairs[7];
 static nbgl_layoutTagValueList_t pairList;
 static nbgl_pageInfoLongPress_t infoLongPress;
 
@@ -72,29 +78,223 @@ static void review_choice(bool confirm) {
     }
 }
 
-static void review_continue(void) {
+static void handle_display_legacy() {
     // Setup data to display
-    pairs[0].item = "Amount";
-    pairs[0].value = g_amount;
-    pairs[1].item = "Address";
-    pairs[1].value = g_address;
+
+    int i = 0;
+    pairs[i].item = "Type";
+    pairs[i++].value = g_type;
+
+    pairs[i].item = "Amount";
+    pairs[i++].value = g_amount;
+
+    pairs[i].item = "To";
+    pairs[i++].value = g_to;
+
+    pairs[i].item = "Gas Price";
+    pairs[i++].value = g_gasPrice;
+
+    pairs[i].item = "Gas Limit";
+    pairs[i++].value = g_gasLimit;
+
+    pairs[i].item = "Nonce";
+    pairs[i++].value = g_nonce;
 
     // Setup list
     pairList.nbMaxLinesForValue = 0;
-    pairList.nbPairs = 2;
+    pairList.nbPairs = i;
     pairList.pairs = pairs;
 
     // Info long press
     infoLongPress.icon = &C_app_klaytn_64px;
     infoLongPress.text = "Sign transaction\nto send KLAY";
     infoLongPress.longPressText = "Hold to sign";
+}
+
+static void handle_display_value_transfer() {
+    // Setup data to display
+
+    int i = 0;
+    pairs[i].item = "Type";
+    pairs[i++].value = g_type;
+
+    pairs[i].item = "Amount";
+    pairs[i++].value = g_amount;
+
+    pairs[i].item = "To";
+    pairs[i++].value = g_to;
+
+    pairs[i].item = "Gas Price";
+    pairs[i++].value = g_gasPrice;
+
+    pairs[i].item = "Gas Limit";
+    pairs[i++].value = g_gasLimit;
+
+    pairs[i].item = "Nonce";
+    pairs[i++].value = g_nonce;
+
+    if (G_context.tx_info.transaction.ratio != 0) {
+        pairs[i].item = "Fee Ratio";
+        pairs[i++].value = g_feeRatio;
+    }
+
+    // Setup list
+    pairList.nbMaxLinesForValue = 0;
+    pairList.nbPairs = i;
+    pairList.pairs = pairs;
+
+    // Info long press
+    infoLongPress.icon = &C_app_klaytn_64px;
+    infoLongPress.text = "Sign transaction\nto send KLAY";
+    infoLongPress.longPressText = "Hold to sign";
+}
+
+static void handle_display_smart_contract_deploy() {
+    // Setup data to display
+    int i = 0;
+
+    pairs[i].item = "Type";
+    pairs[i++].value = g_type;
+
+    pairs[i].item = "Amount";
+    pairs[i++].value = g_amount;
+
+    pairs[i].item = "Gas Price";
+    pairs[i++].value = g_gasPrice;
+
+    pairs[i].item = "Gas Limit";
+    pairs[i++].value = g_gasLimit;
+
+    pairs[i].item = "Nonce";
+    pairs[i++].value = g_nonce;
+
+    if (G_context.tx_info.transaction.ratio != 0) {
+        pairs[i].item = "Fee Ratio";
+        pairs[i++].value = g_feeRatio;
+    }
+
+    // Setup list
+    pairList.nbMaxLinesForValue = 0;
+    pairList.nbPairs = i;
+    pairList.pairs = pairs;
+
+    // Info long press
+    infoLongPress.icon = &C_app_klaytn_64px;
+    infoLongPress.text = "Sign transaction\nto send KLAY";
+    infoLongPress.longPressText = "Hold to sign";
+}
+
+static void handle_display_smart_contract_execution() {
+    // Setup data to display
+    int i = 0;
+
+    pairs[i].item = "Type";
+    pairs[i++].value = g_type;
+
+    pairs[i].item = "Amount";
+    pairs[i++].value = g_amount;
+
+    pairs[i].item = "Smart Contract";
+    pairs[i++].value = g_to;
+
+    pairs[i].item = "Gas Price";
+    pairs[i++].value = g_gasPrice;
+
+    pairs[i].item = "Gas Limit";
+    pairs[i++].value = g_gasLimit;
+
+    pairs[i].item = "Nonce";
+    pairs[i++].value = g_nonce;
+
+    if (G_context.tx_info.transaction.ratio != 0) {
+        pairs[i].item = "Fee Ratio";
+        pairs[i++].value = g_feeRatio;
+    }
+
+    // Setup list
+    pairList.nbMaxLinesForValue = 0;
+    pairList.nbPairs = i;
+    pairList.pairs = pairs;
+
+    // Info long press
+    infoLongPress.icon = &C_app_klaytn_64px;
+    infoLongPress.text = "Sign transaction\nto send KLAY";
+    infoLongPress.longPressText = "Hold to sign";
+}
+
+static void handle_display_cancel() {
+    // Setup data to display
+    int i = 0;
+
+    pairs[i].item = "Type";
+    pairs[i++].value = g_type;
+
+    pairs[i].item = "Amount";
+    pairs[i++].value = g_amount;
+
+    pairs[i].item = "Gas Price";
+    pairs[i++].value = g_gasPrice;
+
+    pairs[i].item = "Gas Limit";
+    pairs[i++].value = g_gasLimit;
+
+    pairs[i].item = "Nonce";
+    pairs[i++].value = g_nonce;
+
+    if (G_context.tx_info.transaction.ratio != 0) {
+        pairs[i].item = "Fee Ratio";
+        pairs[i++].value = g_feeRatio;
+    }
+
+    // Setup list
+    pairList.nbMaxLinesForValue = 0;
+    pairList.nbPairs = i;
+    pairList.pairs = pairs;
+
+    // Info long press
+    infoLongPress.icon = &C_app_klaytn_64px;
+    infoLongPress.text = "Sign transaction\nto send KLAY";
+    infoLongPress.longPressText = "Hold to sign";
+}
+
+static void review_continue(void) {
+    switch (G_context.tx_info.transaction.txType) {
+        case LEGACY:
+            handle_display_legacy();
+            break;
+        case VALUE_TRANSFER:
+        case FEE_DELEGATED_VALUE_TRANSFER:
+        case PARTIAL_FEE_DELEGATED_VALUE_TRANSFER:
+        case VALUE_TRANSFER_MEMO:
+        case FEE_DELEGATED_VALUE_TRANSFER_MEMO:
+        case PARTIAL_FEE_DELEGATED_VALUE_TRANSFER_MEMO:
+            handle_display_value_transfer();
+            break;
+        case SMART_CONTRACT_DEPLOY:
+        case FEE_DELEGATED_SMART_CONTRACT_DEPLOY:
+        case PARTIAL_FEE_DELEGATED_SMART_CONTRACT_DEPLOY:
+            handle_display_smart_contract_deploy();
+            break;
+        case SMART_CONTRACT_EXECUTION:
+        case FEE_DELEGATED_SMART_CONTRACT_EXECUTION:
+        case PARTIAL_FEE_DELEGATED_SMART_CONTRACT_EXECUTION:
+            handle_display_smart_contract_execution();
+            break;
+        case CANCEL:
+        case FEE_DELEGATED_CANCEL:
+        case PARTIAL_FEE_DELEGATED_CANCEL:
+            handle_display_cancel();
+            break;
+        default:
+            PRINTF("Transaction type %d is not supported\n", G_context.tx_info.transaction.txType);
+    }
 
     nbgl_useCaseStaticReview(&pairList, &infoLongPress, "Reject transaction", review_choice);
 }
 
 // Public function to start the transaction review
 // - Check if the app is in the right state for transaction review
-// - Format the amount and address strings in g_amount and g_address buffers
+// - Format the amount and address strings in g_amount and g_to buffers
 // - Display the first screen of the transaction review
 int ui_display_transaction() {
     if (G_context.req_type != CONFIRM_TRANSACTION || G_context.state != STATE_PARSED) {
@@ -102,31 +302,71 @@ int ui_display_transaction() {
         return io_send_sw(SW_BAD_STATE);
     }
 
-    // Format amount and address to g_amount and g_address buffers
+    memset(g_type, 0, sizeof(g_type));
+    memset(g_nonce, 0, sizeof(g_nonce));
+    memset(g_gasPrice, 0, sizeof(g_gasPrice));
+    memset(g_gasLimit, 0, sizeof(g_gasLimit));
+    memset(g_to, 0, sizeof(g_to));
+    memset(g_feeRatio, 0, sizeof(g_feeRatio));
     memset(g_amount, 0, sizeof(g_amount));
-    char amount[30] = {0};
-    if (!format_fpu64(amount,
-                      sizeof(amount),
-                      G_context.tx_info.transaction.value,
-                      EXPONENT_SMALLEST_UNIT)) {
-        return io_send_sw(SW_DISPLAY_AMOUNT_FAIL);
-    }
-    snprintf(g_amount, sizeof(g_amount), "KLAY %.*s", sizeof(amount), amount);
-    memset(g_address, 0, sizeof(g_address));
 
-    if (format_hex(G_context.tx_info.transaction.to, ADDRESS_LEN, g_address, sizeof(g_address)) ==
+    char type[50] = {0};
+    if (!format_transaction_type(G_context.tx_info.transaction.txType, type, sizeof(type))) {
+        return io_send_sw(SW_DISPLAY_TYPE_FAIL);
+    }
+    strncpy(g_type, type, sizeof(g_type));
+
+    char nonce[30] = {0};
+    uint64_t nonceValue = convertUint256ToUint64(&G_context.tx_info.transaction.nonce);
+    if (!format_u64(nonce, sizeof(nonce), nonceValue)) {
+        return io_send_sw(SW_DISPLAY_NONCE_FAIL);
+    }
+    strncpy(g_nonce, nonce, sizeof(g_nonce));
+
+    char gasPrice[30] = {0};
+    uint64_t gasPriceValue = convertUint256ToUint64(&G_context.tx_info.transaction.gasprice);
+    if (!format_u64(gasPrice, sizeof(gasPrice), gasPriceValue)) {
+        return io_send_sw(SW_DISPLAY_GASPRICE_FAIL);
+    }
+    strncpy(g_gasPrice, gasPrice, sizeof(g_gasPrice));
+
+    char gasLimit[30] = {0};
+    uint64_t gasLimitValue = convertUint256ToUint64(&G_context.tx_info.transaction.startgas);
+    if (!format_u64(gasLimit, sizeof(gasLimit), gasLimitValue)) {
+        return io_send_sw(SW_DISPLAY_GAS_FAIL);
+    }
+    strncpy(g_gasLimit, gasLimit, sizeof(g_gasLimit));
+
+    if (format_hex(G_context.tx_info.transaction.to, ADDRESS_LEN, g_to, sizeof(g_to)) ==
         -1) {
         return io_send_sw(SW_DISPLAY_ADDRESS_FAIL);
     }
 
+    char feeRatio[30] = {0};
+    if (!format_u64(feeRatio, sizeof(feeRatio), G_context.tx_info.transaction.ratio)) {
+        return io_send_sw(SW_DISPLAY_FEERATIO_FAIL);
+    }
+    strncpy(g_feeRatio, feeRatio, sizeof(g_feeRatio));
+    strncat(g_feeRatio, "%%", 1);  // append '%' sign
+
+    char amount[50] = {0};
+    if (!amount_to_string(G_context.tx_info.transaction.value,
+                           EXPONENT_SMALLEST_UNIT,
+                           amount,
+                           sizeof(amount))) {
+        return io_send_sw(SW_DISPLAY_AMOUNT_FAIL);
+    }
+    snprintf(g_amount, sizeof(g_amount), "KLAY %.*s", sizeof(amount), amount);
+
     // Start review
+    PRINTF("Displaying transaction review\n");
     nbgl_useCaseReviewStart(&C_app_klaytn_64px,
                             "Review transaction\nto send KLAY",
                             NULL,
                             "Reject transaction",
                             review_continue,
                             ask_transaction_rejection_confirmation);
-    return 0;
+    return DISPLAY_OK;
 }
 
 #endif
