@@ -11,7 +11,7 @@ This documentation describes the APDU messages interface to communicate with the
 The application covers the following functionalities :
 
   - Get a public Klaytn address given a BIP 32 path
-  - Sign a basic Klaytn transaction given a BIP 32 path and raw transaction
+  - Sign a basic Klaytn transaction given a BIP 32 path and raw transaction (signing as a fee payer is not supported)
   - Retrieve the Klaytn app version
   - Retrieve the Klaytn app name
 
