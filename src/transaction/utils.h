@@ -6,36 +6,34 @@
 #include "types.h"
 
 /**
- * Check if memo is encoded using ASCII characters.
+ * Checks if the given memo is encoded correctly.
  *
- * @param[in] memo
- *   Pointer to input byte buffer.
- * @param[in] memo_len
- *   Length of input byte buffer.
- *
- * @return true if success, false otherwise.
- *
+ * @param memo The input memo as a pointer to a uint8_t array.
+ * @param memo_len The length of the input memo.
+ * @return Returns true if the memo is encoded correctly, false otherwise.
  */
 bool transaction_utils_check_encoding(const uint8_t *memo, uint64_t memo_len);
 
 /**
- * Format memo as string.
+ * Formats the given memo into a null-terminated string.
  *
- * @param[in]  memo
- *   Pointer to input byte buffer.
- * @param[in]  memo_len
- *   Length of input byte buffer.
- * @param[out] dst
- *   Pointer to output string.
- * @param[in]  dst_len
- *   Length of output string.
- *
- * @return true if success, false otherwise.
- *
+ * @param memo The input memo as a pointer to a uint8_t array.
+ * @param memo_len The length of the input memo.
+ * @param dst The output buffer to store the formatted memo as a null-terminated string.
+ * @param dst_len The length of the output buffer.
+ * @return Returns true if the memo is successfully formatted, false otherwise.
  */
 bool transaction_utils_format_memo(const uint8_t *memo,
                                    uint64_t memo_len,
                                    char *dst,
                                    uint64_t dst_len);
+
+/**
+ * Converts a big-endian byte array to a 32-bit unsigned integer.
+ *
+ * @param in The input byte array pointer.
+ * @param size The size of the input byte buffer.
+ * @return The converted 32-bit unsigned integer.
+ */
 
 uint32_t u32_from_BE(const uint8_t *in, uint8_t size);
