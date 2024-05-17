@@ -29,7 +29,7 @@ APPNAME = "Klaytn"
 
 # Application version
 APPVERSION_M = 1
-APPVERSION_N = 0
+APPVERSION_N = 1
 APPVERSION_P = 0
 APPVERSION = "$(APPVERSION_M).$(APPVERSION_N).$(APPVERSION_P)"
 
@@ -38,7 +38,6 @@ APP_SOURCE_PATH += src
 
 # Application icons following guidelines:
 # https://developers.ledger.com/docs/embedded-app/design-requirements/#device-icon
-ICON_NANOS = icons/app_klaytn_16px.gif
 ICON_NANOX = icons/app_klaytn_14px.gif
 ICON_NANOSP = icons/app_klaytn_14px.gif
 ICON_STAX = icons/app_klaytn_32px.gif

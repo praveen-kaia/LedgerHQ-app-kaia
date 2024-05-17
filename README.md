@@ -12,50 +12,20 @@ You can quickly setup a convenient environment to build and test your applicatio
 
 It will allow you, whether you are developing on macOS, Windows or Linux to quickly **build** your apps, **test** them on **Speculos** and **load** them on any supported device.
 
-1. Run Docker.
+1. Install & run Docker.
 2. Make sure you have an X11 server running :
    - On Ubuntu Linux, it should be running by default.
    - On macOS, install and launch [XQuartz](https://www.xquartz.org/) (make sure to go to XQuartz > Preferences > Security and check "Allow client connections").
    - On Windows, install and launch [VcXsrv](https://sourceforge.net/projects/vcxsrv/) (make sure to configure it to disable access control).
 3. Open a terminal and clone `LedgerHQ-app-klaytn` with `git clone https://github.com/blooo-io/LedgerHQ-app-klaytn.git`.
-4. Open the `LedgerHQ-app-klaytn` folder with VSCode.
-5. Open the vscode tasks with `ctrl + shift + b` (`command + shift + b` on a Mac) and run the following actions : Pull and run the [ledger-app-dev-tools](https://github.com/LedgerHQ/ledger-app-builder/pkgs/container/ledger-app-builder%2Fledger-app-dev-tools) docker image by selecting `Run dev-tools image`.
+4. Install [VScode](https://code.visualstudio.com/download) and add [Ledger's extension](https://marketplace.visualstudio.com/items?itemName=LedgerHQ.ledger-dev-tools).
+5. Open the `LedgerHQ-app-klaytn` folder with VSCode.
+6. Use Ledger extension's sidebar menu or open the tasks menu with `ctrl + shift + b` (`command + shift + b` on a Mac) to conveniently execute actions :
+    * Build the app for the device model of your choice with `Build`.
+    * Test your binary on [Speculos](https://github.com/LedgerHQ/speculos) with `Run with Speculos`.
+    * You can also run functional tests, load the app on a physical device, and more.
 
 :information_source: The terminal tab of VSCode will show you what commands the extension runs behind the scene.
-
-#### Build
-
-Open the vscode tasks with `ctrl + shift + b` (`command + shift + b` on a Mac) and run the build for the device model of your choice with `Build app`.
-To build the app in debug mode use `Build app [Debug]` instead.
-
-# Test
-
-## Python
-
-- Open the vscode tasks with `ctrl + shift + b` (`command + shift + b` on a Mac) and run the following actions :
-  - Run the tests with `Run functional tests (without logs)`.
-  - Select a SDK
-  - Select a model
-
-#### Load
-
-Open the vscode tasks with `ctrl + shift + b` (`command + shift + b` on a Mac) and load your binary on a Ledger device with `Load app on device`.
-
-If you get the error below when loading.
-
-> File "hid.pyx", line 157, in hid.device.open_path
->
-> OSError: open failed
->
-> make: \*\*\* [Makefile:146: load-only] Error 1
-
-Follow these steps:
-
-- Re-run `Build app` copy the command executed from the terminal
-- Open a terminal, execute the command `sudo su`
-- Paste the copied command and execute it
-- Try loading the app again
-<!--  -->
 
 ### With a terminal
 
@@ -107,7 +77,6 @@ make DEBUG=1  # compile optionally with PRINTF
 
 You can choose which device to compile and load for by setting the `BOLOS_SDK` environment variable to the following values :
 
-- `BOLOS_SDK=$NANOS_SDK`
 - `BOLOS_SDK=$NANOX_SDK`
 - `BOLOS_SDK=$NANOSP_SDK`
 - `BOLOS_SDK=$STAX_SDK`
@@ -198,16 +167,16 @@ pip install -r tests/requirements.txt
 
 Then you can :
 
-Run the functional tests (here for nanos but available for any device once you have built the binaries) :
+Run the functional tests (here for nanox but available for any device once you have built the binaries) :
 
 ```shell
-pytest tests/ --tb=short -v --device nanos
+pytest tests/ --tb=short -v --device nanox
 ```
 
 Or run your app directly with Speculos
 
 ```shell
-speculos --model nanos build/nanos/bin/app.elf
+speculos --model nanox build/nanox/bin/app.elf
 ```
 
 ## Documentation

@@ -27,3 +27,10 @@ doc/latex
 
 # Virtual env for sideload (macOS and Windows)
 ledger/
+
+#VSCode Settings
+settings.json
+
+#Internal tools
+gdb.sh
+docker-compose.yaml
