@@ -18,25 +18,21 @@ jobs:
     name: Analyse
     strategy:
       matrix:
-        sdk: [ "$NANOX_SDK", "$NANOSP_SDK" ]
-        #'cpp' covers C and C++
-        language: [ 'cpp' ]
+        sdk: [ "$NANOX_SDK", "$NANOSP_SDK", "$STAX_SDK" ]
+        # 'cpp' covers C and C++
+        language: ['cpp']
     runs-on: ubuntu-latest
-
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
-
     container:
       image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder-legacy:latest
 
     steps:
       - name: Clone
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
           queries: security-and-quality
@@ -45,6 +41,5 @@ jobs:
       - name: Build
         run: |
           make BOLOS_SDK=${{ matrix.sdk }}
-
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3
