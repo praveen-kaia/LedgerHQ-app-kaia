@@ -30,3 +30,7 @@ ledger/
 
 #VSCode Settings
 settings.json
+
+#Internal tools
+gdb.sh
+docker-compose.yaml
