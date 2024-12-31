@@ -1,5 +1,5 @@
 /*****************************************************************************
- *   Ledger App Klaytn.
+ *   Ledger App Kaia.
  *   (c) 2024 Blooo SAS.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -77,8 +77,8 @@ int ui_display_address() {
         return io_send_sw(SW_DISPLAY_ADDRESS_FAIL);
     }
 
-    nbgl_useCaseReviewStart(&C_app_klaytn_64px,
-                            "Verify KLAY address",
+    nbgl_useCaseReviewStart(&C_app_kaia_64px,
+                            "Verify KAIA address",
                             NULL,
                             "Cancel",
                             continue_review,

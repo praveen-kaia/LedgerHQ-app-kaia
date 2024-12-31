@@ -1,5 +1,5 @@
 /*****************************************************************************
- *   Ledger App Klaytn.
+ *   Ledger App Kaia.
  *   (c) 2024 Blooo SAS.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -106,8 +106,8 @@ static void handle_display_legacy() {
     pairList.pairs = pairs;
 
     // Info long press
-    infoLongPress.icon = &C_app_klaytn_64px;
-    infoLongPress.text = "Sign transaction\nto send KLAY";
+    infoLongPress.icon = &C_app_kaia_64px;
+    infoLongPress.text = "Sign transaction\nto send KAIA";
     infoLongPress.longPressText = "Hold to sign";
 }
 
@@ -144,8 +144,8 @@ static void handle_display_value_transfer() {
     pairList.pairs = pairs;
 
     // Info long press
-    infoLongPress.icon = &C_app_klaytn_64px;
-    infoLongPress.text = "Sign transaction\nto send KLAY";
+    infoLongPress.icon = &C_app_kaia_64px;
+    infoLongPress.text = "Sign transaction\nto send KAIA";
     infoLongPress.longPressText = "Hold to sign";
 }
 
@@ -179,8 +179,8 @@ static void handle_display_smart_contract_deploy() {
     pairList.pairs = pairs;
 
     // Info long press
-    infoLongPress.icon = &C_app_klaytn_64px;
-    infoLongPress.text = "Sign transaction\nto send KLAY";
+    infoLongPress.icon = &C_app_kaia_64px;
+    infoLongPress.text = "Sign transaction\nto send KAIA";
     infoLongPress.longPressText = "Hold to sign";
 }
 
@@ -217,8 +217,8 @@ static void handle_display_smart_contract_execution() {
     pairList.pairs = pairs;
 
     // Info long press
-    infoLongPress.icon = &C_app_klaytn_64px;
-    infoLongPress.text = "Sign transaction\nto send KLAY";
+    infoLongPress.icon = &C_app_kaia_64px;
+    infoLongPress.text = "Sign transaction\nto send KAIA";
     infoLongPress.longPressText = "Hold to sign";
 }
 
@@ -252,8 +252,8 @@ static void handle_display_cancel() {
     pairList.pairs = pairs;
 
     // Info long press
-    infoLongPress.icon = &C_app_klaytn_64px;
-    infoLongPress.text = "Sign transaction\nto send KLAY";
+    infoLongPress.icon = &C_app_kaia_64px;
+    infoLongPress.text = "Sign transaction\nto send KAIA";
     infoLongPress.longPressText = "Hold to sign";
 }
 
@@ -355,12 +355,12 @@ int ui_display_transaction() {
                           sizeof(amount))) {
         return io_send_sw(SW_DISPLAY_AMOUNT_FAIL);
     }
-    snprintf(g_amount, sizeof(g_amount), "KLAY %.*s", sizeof(amount), amount);
+    snprintf(g_amount, sizeof(g_amount), "KAIA %.*s", sizeof(amount), amount);
 
     // Start review
     PRINTF("Displaying transaction review\n");
-    nbgl_useCaseReviewStart(&C_app_klaytn_64px,
-                            "Review transaction\nto send KLAY",
+    nbgl_useCaseReviewStart(&C_app_kaia_64px,
+                            "Review transaction\nto send KAIA",
                             NULL,
                             "Reject transaction",
                             review_continue,

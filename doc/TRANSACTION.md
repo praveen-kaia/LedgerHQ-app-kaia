@@ -1,23 +1,23 @@
-# Klaytn Transaction Serialization
+# Kaia Transaction Serialization
 
 ## Overview
 
-Klaytn uses RLP (Recursive Length Prefix) encoding for transaction serialization, similar to Ethereum. However, Klaytn transactions (except for LegacyTransaction) are double encoded, and they contain additional fields when RLP encoded for signature.
+Kaia uses RLP (Recursive Length Prefix) encoding for transaction serialization, similar to Ethereum. However, Kaia transactions (except for LegacyTransaction) are double encoded, and they contain additional fields when RLP encoded for signature.
 
 ## Amount Units
 
-The base unit in Klaytn is KLAY. The smallest unit used in a raw transaction is the *peb*: 
-1 KLAY = 10^18 peb (1,000,000,000,000,000,000 peb).
+The base unit in Kaia is KAIA. The smallest unit used in a raw transaction is the *kei*: 
+1 KAIA = 10^18 kei (1,000,000,000,000,000,000 kei).
 
 ## Address Format
 
-Klaytn addresses are hexadecimal numbers, derived from the last 20 bytes of the Keccak-256 hash of the public key.
+Kaia addresses are hexadecimal numbers, derived from the last 20 bytes of the Keccak-256 hash of the public key.
 
 ## Structure
 
 ### Transaction
 
-A transaction in a blockchain platform is a message sent between nodes that changes the state of the blockchain. For example, when a transaction that sends 10 KLAY from Alice’s account to Bob’s is executed, Alice's balance decreases by 10 KLAY, and Bob's balance increases by 10 KLAY. A transaction is an atomic operation and cannot be interleaved with another transaction. A typical blockchain transaction has components as shown below:
+A transaction in a blockchain platform is a message sent between nodes that changes the state of the blockchain. For example, when a transaction that sends 10 KAIA from Alice’s account to Bob’s is executed, Alice's balance decreases by 10 KAIA, and Bob's balance increases by 10 KAIA. A transaction is an atomic operation and cannot be interleaved with another transaction. A typical blockchain transaction has components as shown below:
 
 | Component | Description |
 | --- | --- |
@@ -25,21 +25,21 @@ A transaction in a blockchain platform is a message sent between nodes that chan
 | `gasPrice` | The price per unit of gas the sender is willing to pay. |
 | `gas` | The maximum amount of gas the transaction is allowed to consume. |
 | `to` | The recipient's account address. |
-| `value` | The amount of KLAY (in peb) to be transferred. |
+| `value` | The amount of KAIA (in peb) to be transferred. |
 | `input` | Data attached to the transaction, often used for contract execution. |
 | `v`, `r`, `s` | The components of the cryptographic signature, used to authenticate the sender and ensure transaction integrity. |
 
 ### Transaction Types
 
-Klaytn supports various transaction types, each with different fields and structures. For a comprehensive list of transaction types, refer to the [Klaytn Transaction Types](https://archive-docs.klaytn.foundation/content/klaytn/design/transactions#sendertxhash).
+Kaia supports various transaction types, each with different fields and structures. For a comprehensive list of transaction types, refer to the [Kaia Transaction Types](https://docs.kaia.io/learn/transactions).
 
 ### RLP Encoding
 
-RLP (Recursive Length Prefix) encoding is used to serialize Klaytn transactions. It is a binary encoding scheme that represents data structures in a compact and efficient manner. For more information, refer to the [RLP specification](https://github.com/ethereum/wiki/wiki/RLP).
+RLP (Recursive Length Prefix) encoding is used to serialize Kaia transactions. It is a binary encoding scheme that represents data structures in a compact and efficient manner. For more information, refer to the [RLP specification](https://github.com/ethereum/wiki/wiki/RLP).
 
 ### Double Encoding
 
-In Klaytn, all transactions except for `LegacyTransaction` are double encoded. This means the RLP encoded transaction is itself RLP encoded again.
+In Kaia, all transactions except for `LegacyTransaction` are double encoded. This means the RLP encoded transaction is itself RLP encoded again.
 
 ### Signature
 
@@ -73,4 +73,4 @@ SigHash = keccak256(SigRLP)
 Signature = sign(SigHash, <private key>)
 ```
 
-This ensures the transaction can be properly processed and verified by the Klaytn network.
+This ensures the transaction can be properly processed and verified by the Kaia network.

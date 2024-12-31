@@ -2,20 +2,20 @@
 
 ## About
 
-This documentation describes the APDU messages interface to communicate with the Klaytn application.
+This documentation describes the APDU messages interface to communicate with the Kaia application.
 
 The application covers the following functionalities :
 
-- Get a public Klaytn address given a BIP 32 path
-- Sign a basic Klaytn transaction given a BIP 32 path and raw transaction (signing as a fee payer is NOT supported)
-- Retrieve the Klaytn app version
-- Retrieve the Klaytn app name
+- Get a public Kaia address given a BIP 32 path
+- Sign a basic Kaia transaction given a BIP 32 path and raw transaction (signing as a fee payer is NOT supported)
+- Retrieve the Kaia app version
+- Retrieve the Kaia app name
 
 The application interface can be accessed over HID or BLE
 
 ## APDUs
 
-### GET KLAYTN PUBLIC ADDRESS
+### GET KAIA PUBLIC ADDRESS
 
 #### Description
 
@@ -52,11 +52,11 @@ The address can be optionally checked on the device before being returned.
 | Chain code length | 1      |
 | Chain code        | var    |
 
-### SIGN KLAYTN TRANSACTION
+### SIGN KAIA TRANSACTION
 
 #### Description
 
-This command signs a Klaytn transaction after having the user validate the transactions parameters.
+This command signs a Kaia transaction after having the user validate the transactions parameters.
 
 The input data is the RLP encoded transaction streamed to the device in 255 bytes maximum data chunks.
 
@@ -96,7 +96,7 @@ The input data is the RLP encoded transaction streamed to the device in 255 byte
 
 #### Description
 
-This command returns klaytn application version
+This command returns kaia application version
 
 #### Coding
 
@@ -122,7 +122,7 @@ None
 
 #### Description
 
-This command returns klaytn application name
+This command returns kaia application name
 
 #### Coding
 

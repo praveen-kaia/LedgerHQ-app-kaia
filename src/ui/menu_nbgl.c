@@ -1,6 +1,6 @@
 
 /*****************************************************************************
- *   Ledger App Klaytn.
+ *   Ledger App Kaia.
  *   (c) 2024 Blooo SAS.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,7 +43,7 @@ void ui_menu_main(void) {
 #define SETTINGS_BUTTON_ENABLED (true)
 
     nbgl_useCaseHome(APPNAME,
-                     &C_app_klaytn_64px,
+                     &C_app_kaia_64px,
                      NULL,
                      SETTINGS_BUTTON_ENABLED,
                      ui_menu_settings,

@@ -1,8 +1,8 @@
-[![Ensure compliance with Ledger guidelines](https://github.com/blooo-io/LedgerHQ-app-klaytn/actions/workflows/guidelines_enforcer.yml/badge.svg)](https://github.com/blooo-io/LedgerHQ-app-klaytn/actions/workflows/guidelines_enforcer.yml) [![Build and run functional tests using ragger through reusable workflow](https://github.com/blooo-io/LedgerHQ-app-klaytn/actions/workflows/build_and_functional_tests.yml/badge.svg?branch=master)](https://github.com/blooo-io/LedgerHQ-app-klaytn/actions/workflows/build_and_functional_tests.yml)
+[![Ensure compliance with Ledger guidelines](https://github.com/blooo-io/LedgerHQ-app-kaia/actions/workflows/guidelines_enforcer.yml/badge.svg)](https://github.com/blooo-io/LedgerHQ-app-kaia/actions/workflows/guidelines_enforcer.yml) [![Build and run functional tests using ragger through reusable workflow](https://github.com/blooo-io/LedgerHQ-app-kaia/actions/workflows/build_and_functional_tests.yml/badge.svg?branch=master)](https://github.com/blooo-io/LedgerHQ-app-kaia/actions/workflows/build_and_functional_tests.yml)
 
-# Klaytn app for Ledger Wallet
+# Kaia app for Ledger Wallet
 
-This app adds support for the Klaytn native token for the Ledger Nano S/X/SP and Stax.
+This app adds support for the Kaia native token for the Ledger Nano S/X/SP and Stax.
 
 ## Quick start guide
 
@@ -17,9 +17,9 @@ It will allow you, whether you are developing on macOS, Windows or Linux to quic
    - On Ubuntu Linux, it should be running by default.
    - On macOS, install and launch [XQuartz](https://www.xquartz.org/) (make sure to go to XQuartz > Preferences > Security and check "Allow client connections").
    - On Windows, install and launch [VcXsrv](https://sourceforge.net/projects/vcxsrv/) (make sure to configure it to disable access control).
-3. Open a terminal and clone `LedgerHQ-app-klaytn` with `git clone https://github.com/blooo-io/LedgerHQ-app-klaytn.git`.
+3. Open a terminal and clone `LedgerHQ-app-kaia` with `git clone https://github.com/blooo-io/LedgerHQ-app-kaia.git`.
 4. Install [VScode](https://code.visualstudio.com/download) and add [Ledger's extension](https://marketplace.visualstudio.com/items?itemName=LedgerHQ.ledger-dev-tools).
-5. Open the `LedgerHQ-app-klaytn` folder with VSCode.
+5. Open the `LedgerHQ-app-kaia` folder with VSCode.
 6. Use Ledger extension's sidebar menu or open the tasks menu with `ctrl + shift + b` (`command + shift + b` on a Mac) to conveniently execute actions :
     * Build the app for the device model of your choice with `Build`.
     * Test your binary on [Speculos](https://github.com/LedgerHQ/speculos) with `Run with Speculos`.
@@ -136,7 +136,7 @@ python3 -m ledgerblue.runScript --scp --fileName bin/app.apdu --elfFile bin/app.
 
 ## Test
 
-The Klaytn app comes with functional tests implemented with Ledger's [Ragger](https://github.com/LedgerHQ/ragger) test framework.
+The Kaia app comes with functional tests implemented with Ledger's [Ragger](https://github.com/LedgerHQ/ragger) test framework.
 
 ### macOS / Windows
 

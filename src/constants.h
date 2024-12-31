@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * Instruction class of the Klaytn application.
+ * Instruction class of the Kaia application.
  */
 #define CLA 0xE0
 
@@ -35,6 +35,6 @@
 #define MAX_DER_SIG_LEN 72
 
 /**
- * Exponent used to convert peb to KLAY unit (N KLAY = N * 10^18 peb).
+ * Exponent used to convert peb to KAIA unit (N KAIA = N * 10^18 kei).
  */
 #define EXPONENT_SMALLEST_UNIT 18

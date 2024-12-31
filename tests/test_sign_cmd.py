@@ -1,8 +1,8 @@
 import pytest
 
-from application_client.klaytn_transaction import Transaction
-from application_client.klaytn_command_sender import KlaytnCommandSender, Errors
-from application_client.klaytn_response_unpacker import strip_v_from_signature, unpack_get_public_key_response, unpack_sign_tx_response
+from application_client.kaia_transaction import Transaction
+from application_client.kaia_command_sender import KaiaCommandSender, Errors
+from application_client.kaia_response_unpacker import strip_v_from_signature, unpack_get_public_key_response, unpack_sign_tx_response
 from ragger.error import ExceptionRAPDU
 from ragger.navigator import NavInsID
 from utils import ROOT_SCREENSHOT_PATH, check_signature_validity
@@ -26,9 +26,9 @@ def verify_transaction_signature_from_public_key(transaction: bytes, signature: 
 # This function is a parametrized test that will test the signing of a transaction with a raw transaction in hex
 def perform_test_sign_tx_with_raw_tx(firmware, backend, navigator, test_name, raw_transaction_hex):
     # Use the app interface instead of raw interface
-    client = KlaytnCommandSender(backend)
+    client = KaiaCommandSender(backend)
     # The path used for this entire test
-    path: str = "m/44'/8217'/0'/0/0"
+    path: str = "m/44'/60'/0'/0/0"
 
     # First we need to get the public key of the device in order to build the transaction
     rapdu = client.get_public_key(path=path)

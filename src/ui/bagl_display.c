@@ -1,5 +1,5 @@
 /*****************************************************************************
- *   Ledger App Klaytn.
+ *   Ledger App Kaia.
  *   (c) 2024 Blooo SAS.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -350,7 +350,7 @@ int ui_display_transaction() {
                           sizeof(amount))) {
         return io_send_sw(SW_DISPLAY_AMOUNT_FAIL);
     }
-    snprintf(g_amount, sizeof(g_amount), "KLAY %.*s", sizeof(amount), amount);
+    snprintf(g_amount, sizeof(g_amount), "KAIA %.*s", sizeof(amount), amount);
 
     g_validate_callback = &ui_action_validate_transaction;
 

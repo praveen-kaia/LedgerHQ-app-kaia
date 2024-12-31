@@ -1,5 +1,5 @@
 /*****************************************************************************
- *   Ledger App Klaytn.
+ *   Ledger App Kaia.
  *   (c) 2024 Blooo SAS.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
